@@ -31,6 +31,7 @@ builder.Services.AddMvc();
 // Add Image Service
 builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 // Add Email Service
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -58,6 +59,12 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "custom",
+    pattern: "Content/{slug}",
+    defaults: new { controller = "BlogPosts", action = "Details" }
+    );
 
 app.MapControllerRoute(
     name: "default",

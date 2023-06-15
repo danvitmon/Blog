@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,12 +55,9 @@ namespace Blog.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-
-            Comment comment = new() { AuthorId = _userManager.GetUserId(User) };
-
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
-            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
-            return View(comment);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content");
+            return View();
         }
 
         // POST: Comments/Create
@@ -66,13 +65,21 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Body,Created,Updated,UpdateReason,BlogPostId,AuthorId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Id,Body,BlogPostId")] Comment comment)
         {
+            ModelState.Remove("AuthorId");
+
             if (ModelState.IsValid)
             {
+                comment.Created = DateTime.UtcNow;
+                comment.AuthorId = _userManager.GetUserId(User);
+
+                BlogPost? blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == comment.BlogPostId);
+
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Details", "BlogPosts", new { slug = blogPost.Slug});
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);

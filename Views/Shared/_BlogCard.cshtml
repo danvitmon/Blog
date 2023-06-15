@@ -1,0 +1,74 @@
+﻿@model Blog.Models.BlogPost
+
+@using Blog.Enums;
+@using Blog.Models;
+@using Blog.Services.Interfaces;
+
+@inject IImageService _ImageService
+@inject IBlogService _BlogService
+
+<!-- Start Post List  -->
+<div class="content-block post-list-view mt--30">
+    <div class="post-thumbnail">
+        <a asp-action="Details" asp-route-slug="@Model.Slug" asp-controller="BlogPosts">
+            <img src="@_ImageService.ConvertByteArrayToFile(Model.ImageData,Model.ImageType,(int)DefaultImage.BlogPostImage)" alt="Post Images">
+        </a>
+    </div>
+    <div class="post-content">
+
+        @foreach (Category category in (await _BlogService.GetCategoriesAsync()).Take(1))
+        {
+            <div class="post-cat">
+                <div class="post-cat-list">
+                    <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-id="@category.Id" asp-controller="Categories">
+                        <span class="hover-flip-item">
+                            <span data-text="@Model.Category?.Name">@Model.Category?.Name</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        }
+        @*<div class="post-cat">
+            <div class="post-cat-list">
+                <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-category="@Category.Id" asp-controller="Categories">
+                    <span class="hover-flip-item">
+                        <span data-text="@Model.Category?.Name">@Model.Category?.Name</span>
+                    </span>
+                </a>
+            </div>
+        </div>*@
+        <h4 class="title">
+            <a asp-action="Details" asp-route-slug="@Model.Slug" asp-controller="BlogPosts">
+                @Model.Title
+            </a>
+        </h4>
+        <div class="post-meta-wrapper">
+            <div class="post-meta">
+                <div class="content">
+                    <h6 class="post-author-name">
+                        <a class="hover-flip-item-wrapper" href="author.html">
+                            <span class="hover-flip-item">
+                                <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
+                            </span>
+                        </a>
+                    </h6>
+                    <ul class="post-meta-list">
+                        <li>@Model.CreatedDate.ToString("MMM dd, yyyy") </li>
+                        @*<li>3 min read</li>*@
+                    </ul>
+                </div>
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <ul class="social-share-transparent justify-content-end">
+                    <li><a asp-action="Edit" asp-route-Id="@Model.Id" asp-controller="BlogPosts"><i class="fa-solid fa-file-pen fa-xl"></i></a></li>
+                    <li><a asp-action="Details" asp-route-slug="@Model.Slug" asp-controller="BlogPosts"><i class="fa-solid fa-file-invoice fa-xl"></i></a></li>
+                    <li><a asp-action="Delete" asp-route-id="@Model.Id" asp-controller="BlogPosts"><i class="fa-solid fa-trash-can fa-xl"></i></a></li>
+                </ul>
+            }
+
+        </div>
+    </div>
+</div>
+<!-- End Post List  -->

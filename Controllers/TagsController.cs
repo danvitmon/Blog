@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using X.PagedList;
+using Blog.Services;
+using Blog.Services.Interfaces;
 
 namespace Blog.Controllers
 {
     public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBlogService _blogService;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context, IBlogService blogService)
         {
             _context = context;
+            _blogService = blogService;
         }
 
         // GET: Tags
@@ -28,21 +33,29 @@ namespace Blog.Controllers
         }
 
         // GET: Tags/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? tagId, int? pageNum)
         {
-            if (id == null || _context.Tags == null)
+            if (tagId == null || _context.Tags == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tags
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Tag? tag = await _context.Tags.Include(t => t.BlogPosts).FirstOrDefaultAsync(t => t.Id == tagId);
+
             if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(tag);
+            int pageSize = 5;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await (tag.BlogPosts).ToPagedListAsync(page, pageSize);
+
+            ViewData["ActionName"] = "Details";
+            ViewData["Tags"] = await _blogService.GetTagsAsync();
+
+            return View(blogPosts);
         }
 
         // GET: Tags/Create

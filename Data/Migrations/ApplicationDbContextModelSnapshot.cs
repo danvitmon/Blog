@@ -22,6 +22,32 @@ namespace Blog.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Blog.Models.BlogLike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BlogUserId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsLiked")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId");
+
+                    b.HasIndex("BlogUserId");
+
+                    b.ToTable("BlogLikes");
+                });
+
             modelBuilder.Entity("Blog.Models.BlogPost", b =>
                 {
                     b.Property<int>("Id")
@@ -57,6 +83,7 @@ namespace Blog.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Slug")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
@@ -64,7 +91,7 @@ namespace Blog.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -215,7 +242,7 @@ namespace Blog.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<DateTime>("Updated")
+                    b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -392,6 +419,23 @@ namespace Blog.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Blog.Models.BlogLike", b =>
+                {
+                    b.HasOne("Blog.Models.BlogPost", "BlogPost")
+                        .WithMany("Likes")
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Blog.Models.BlogUser", "BlogUser")
+                        .WithMany("BlogLikes")
+                        .HasForeignKey("BlogUserId");
+
+                    b.Navigation("BlogPost");
+
+                    b.Navigation("BlogUser");
+                });
+
             modelBuilder.Entity("Blog.Models.BlogPost", b =>
                 {
                     b.HasOne("Blog.Models.Category", "Category")
@@ -500,10 +544,14 @@ namespace Blog.Data.Migrations
             modelBuilder.Entity("Blog.Models.BlogPost", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("Blog.Models.BlogUser", b =>
                 {
+                    b.Navigation("BlogLikes");
+
                     b.Navigation("Comments");
                 });
 

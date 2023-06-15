@@ -15,6 +15,7 @@ namespace Blog.Data
         public virtual DbSet<Comment> Comments { get; set; } = default!;
         public virtual DbSet<Tag> Tags { get; set; } = default!;
         public virtual DbSet<Category> Categories { get; set; } = default!;
+        public virtual DbSet<BlogLike> BlogLikes { get; set; } = default!;
 
     }
 }

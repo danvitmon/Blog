@@ -20,11 +20,12 @@ namespace Blog.Models
         public string? Content { get; set; }
 
         [DataType(DataType.DateTime)]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = default;
 
         [DataType(DataType.DateTime)]
-        public DateTime UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
 
+        [Required]
         public string? Slug { get; set; }
 
         [Display(Name = "Deleted?")]
@@ -53,5 +54,7 @@ namespace Blog.Models
 
         // 1-to-Many
         public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
+
+        public virtual ICollection<BlogLike> Likes { get; set; } = new HashSet<BlogLike>();
     }
 }

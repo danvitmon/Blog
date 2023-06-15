@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using X.PagedList;
+using Blog.Services;
+using Blog.Services.Interfaces;
 
 namespace Blog.Controllers
 {
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBlogService _blogService;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context, IBlogService blogService)
         {
             _context = context;
+            _blogService = blogService;
         }
 
         // GET: Categories
@@ -28,21 +33,31 @@ namespace Blog.Controllers
         }
 
         // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? pageNum)
         {
             if (id == null || _context.Categories == null)
             {
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            Category? category1 = await _context.Categories
+                                                .Include(c => c.BlogPosts)
+                                                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (category1 == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            int pageSize = 5;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await (category1.BlogPosts).ToPagedListAsync(page, pageSize);
+
+            ViewData["ActionName"] = "Details";
+            ViewData["Categories"] = await _blogService.GetCategoriesAsync();
+
+            return View(blogPosts);
         }
 
         // GET: Categories/Create
