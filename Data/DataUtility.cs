@@ -3,137 +3,127 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Blog.Data
+namespace Blog.Data;
+
+public static class DataUtility
 {
-    public static class DataUtility
+  private const string? _adminRole = "Admin";
+  private const string? _moderatorRole = "Moderator";
+
+  public static string GetConnectionString(IConfiguration configuration)
+  {
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+
+    return string.IsNullOrEmpty(databaseUrl) ? connectionString! : BuildConnectionString(databaseUrl);
+  }
+
+  private static string BuildConnectionString(string databaseUrl)
+  {
+    var databaseUri = new Uri(databaseUrl);
+    var userInfo = databaseUri.UserInfo.Split(':');
+    var builder = new NpgsqlConnectionStringBuilder
     {
-        private const string? _adminRole = "Admin";
-        private const string? _moderatorRole = "Moderator";
-
-        public static string GetConnectionString(IConfiguration configuration)
-        {
-            string? connectionString = configuration.GetConnectionString("DefaultConnection");
-            string? databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-
-
-            return string.IsNullOrEmpty(databaseUrl) ? connectionString! : BuildConnectionString(databaseUrl);
-
-        }
-
-        private static string BuildConnectionString(string databaseUrl)
-        {
-            var databaseUri = new Uri(databaseUrl);
-            var userInfo = databaseUri.UserInfo.Split(':');
-            var builder = new NpgsqlConnectionStringBuilder()
-            {
-                Host = databaseUri.Host,
-                Port = databaseUri.Port,
-                Username = userInfo[0],
-                Password = userInfo[1],
-                Database = databaseUri.LocalPath.TrimStart('/'),
-                SslMode = SslMode.Require,
-                TrustServerCertificate = true
-            };
-            return builder.ToString();
-        }
+      Host = databaseUri.Host,
+      Port = databaseUri.Port,
+      Username = userInfo[0],
+      Password = userInfo[1],
+      Database = databaseUri.LocalPath.TrimStart('/'),
+      SslMode = SslMode.Require,
+      TrustServerCertificate = true
+    };
+    return builder.ToString();
+  }
 
 
-        public static async Task ManageDataAsync(IServiceProvider svcProvider)
-        {
-            // Obtaining the necessary services based on the IServiceProivder parameter
-            var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
-            var userManagerSvc = svcProvider.GetRequiredService<UserManager<BlogUser>>();
-            var roleManagerSvc = svcProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var configurationSvc = svcProvider.GetRequiredService<IConfiguration>();
+  public static async Task ManageDataAsync(IServiceProvider svcProvider)
+  {
+    // Obtaining the necessary services based on the IServiceProivder parameter
+    var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
+    var userManagerSvc = svcProvider.GetRequiredService<UserManager<BlogUser>>();
+    var roleManagerSvc = svcProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var configurationSvc = svcProvider.GetRequiredService<IConfiguration>();
 
-            // Align the database by checking Migrationgs
-            await dbContextSvc.Database.MigrateAsync();
+    // Align the database by checking Migrationgs
+    await dbContextSvc.Database.MigrateAsync();
 
-            // Seed Application Roles
-            await SeedRolesAsync(roleManagerSvc);
+    // Seed Application Roles
+    await SeedRolesAsync(roleManagerSvc);
 
-            // Seed Demo User(s)
-            await SeedBlogUsersAsync(userManagerSvc, configurationSvc);
-
-        }
-
-
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
-        {
-            if (!await roleManager.RoleExistsAsync(_adminRole!))
-            {
-                await roleManager.CreateAsync(new IdentityRole(_adminRole!));
-            }
-
-            if (!await roleManager.RoleExistsAsync(_moderatorRole!))
-            {
-                await roleManager.CreateAsync(new IdentityRole(_moderatorRole!));
-            }
-        }
+    // Seed Demo User(s)
+    await SeedBlogUsersAsync(userManagerSvc, configurationSvc);
+  }
 
 
+  private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+  {
+    if (!await roleManager.RoleExistsAsync(_adminRole!)) await roleManager.CreateAsync(new IdentityRole(_adminRole!));
 
-        // Demo Users Seed Method
-        private static async Task SeedBlogUsersAsync(UserManager<BlogUser> userManager, IConfiguration configuration)
-        {
-
-            string? adminEmail = configuration["AdminLoginEmail"] ?? Environment.GetEnvironmentVariable("AdminLoginEmail");
-            string? adminPassword = configuration["AdminLoginPassword"] ?? Environment.GetEnvironmentVariable("AdminLoginPassword");
-
-            string? moderatorEmail = configuration["ModeratorLoginEmail"] ?? Environment.GetEnvironmentVariable("ModeratorLoginEmail");
-            string? moderatorPassword = configuration["ModeratorLoginPassword"] ?? Environment.GetEnvironmentVariable("ModeratorLoginPassword");
+    if (!await roleManager.RoleExistsAsync(_moderatorRole!))
+      await roleManager.CreateAsync(new IdentityRole(_moderatorRole!));
+  }
 
 
-            try
-            {
-                // Seed the Admin
-                BlogUser adminUser = new BlogUser()
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    FirstName = "Daniel",
-                    LastName = "Monastirsky",
-                    EmailConfirmed = true
-                };
+  // Demo Users Seed Method
+  private static async Task SeedBlogUsersAsync(UserManager<BlogUser> userManager, IConfiguration configuration)
+  {
+    var adminEmail = configuration["AdminLoginEmail"] ?? Environment.GetEnvironmentVariable("AdminLoginEmail");
+    var adminPassword = configuration["AdminLoginPassword"] ?? Environment.GetEnvironmentVariable("AdminLoginPassword");
 
-                BlogUser? user = await userManager.FindByEmailAsync(adminUser.Email!);
-
-                if (user == null)
-                {
-                    // TODO: Use Enviroment Variable - Environment.GetEnvironmentVariable("DemoLoginPassword")!
-                    await userManager.CreateAsync(adminUser, adminPassword!);
-                    await userManager.AddToRoleAsync(adminUser, _adminRole!);
-                }
-
-                // Seed the Moderator
-                BlogUser? moderatorUser = new BlogUser()
-                {
-                    UserName = moderatorEmail,
-                    Email = moderatorEmail,
-                    FirstName = "Dan",
-                    LastName = "Mon",
-                    EmailConfirmed = true
-                };
-
-                BlogUser? moduser = await userManager.FindByEmailAsync(moderatorUser.Email!);
-
-                if (moduser == null)
-                {
-                    // TODO: Use Enviroment Variable - Environment.GetEnvironmentVariable("DemoLoginPassword")!
-                    await userManager.CreateAsync(moderatorUser, moderatorPassword!);
-                    await userManager.AddToRoleAsync(moderatorUser, _moderatorRole!);
-                }
+    var moderatorEmail = configuration["ModeratorLoginEmail"] ??
+                         Environment.GetEnvironmentVariable("ModeratorLoginEmail");
+    var moderatorPassword = configuration["ModeratorLoginPassword"] ??
+                            Environment.GetEnvironmentVariable("ModeratorLoginPassword");
 
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("*************  ERROR  *************");
-                Console.WriteLine("Error Seeding Demo Login User.");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("***********************************");
-                throw;
-            }
-        }
+    try
+    {
+      // Seed the Admin
+      var adminUser = new BlogUser
+      {
+        UserName = adminEmail,
+        Email = adminEmail,
+        FirstName = "Daniel",
+        LastName = "Monastirsky",
+        EmailConfirmed = true
+      };
+
+      var user = await userManager.FindByEmailAsync(adminUser.Email!);
+
+      if (user == null)
+      {
+        // TODO: Use Enviroment Variable - Environment.GetEnvironmentVariable("DemoLoginPassword")!
+        await userManager.CreateAsync(adminUser, adminPassword!);
+        await userManager.AddToRoleAsync(adminUser, _adminRole!);
+      }
+
+      // Seed the Moderator
+      var moderatorUser = new BlogUser
+      {
+        UserName = moderatorEmail,
+        Email = moderatorEmail,
+        FirstName = "Dan",
+        LastName = "Mon",
+        EmailConfirmed = true
+      };
+
+      var moduser = await userManager.FindByEmailAsync(moderatorUser.Email!);
+
+      if (moduser == null)
+      {
+        // TODO: Use Enviroment Variable - Environment.GetEnvironmentVariable("DemoLoginPassword")!
+        await userManager.CreateAsync(moderatorUser, moderatorPassword!);
+        await userManager.AddToRoleAsync(moderatorUser, _moderatorRole!);
+      }
     }
+    catch (Exception ex)
+    {
+      Console.WriteLine("*************  ERROR  *************");
+      Console.WriteLine("Error Seeding Demo Login User.");
+      Console.WriteLine(ex.Message);
+      Console.WriteLine("***********************************");
+      throw;
+    }
+  }
 }

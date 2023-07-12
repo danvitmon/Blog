@@ -1,247 +1,272 @@
-﻿@using Blog.Enums;
-@using Blog.Services.Interfaces;
-@using Microsoft.AspNetCore.Identity;
-@model Blog.Models.BlogPost
+﻿@using Blog.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@using Blog.Enums
+@model BlogPost
 
 @inject IImageService _ImageService
 @inject IBlogService _BlogPostService
 @inject UserManager<BlogUser> _UserManager
 
 @{
-    ViewData["Title"] = "Details";
-    bool isLiked = await _BlogPostService.UserLikedBlogAsync(Model.Id, _UserManager.GetUserId(User)!);
+  ViewData["Title"] = "Details";
+  var isLiked = await _BlogPostService.UserLikedBlogAsync(Model.Id, _UserManager.GetUserId(User)!);
 }
 <style>
-    .ck-editor__editable_inline {
-        min-height: 300px;
-    }
+  .ck-editor__editable_inline { min-height: 300px; }
 </style>
 <!-- Start Post Single Wrapper  -->
 <div class="post-single-wrapper axil-section-gap bg-color-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2">
-                <!-- Start Banner Area -->
-                <div class="banner banner-single-post post-formate post-layout pb--40">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <!-- Start Single Slide  -->
-                                <div class="content-block">
-                                    <!-- Start Post Content  -->
-                                    <div class="post-content">
-                                        @foreach (Category category in (await _BlogPostService.GetCategoriesAsync()).Take(1))
-                                        {
-                                            <div class="post-cat">
-                                                <div class="post-cat-list">
-                                                    <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-id="@category.Id" asp-controller="Categories">
-                                                        <span class="hover-flip-item">
-                                                            <span data-text="@Model.Category?.Name">@Model.Category?.Name</span>
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        }
-                                        <h1 class="title">
-                                            @Model.Title
-                                        </h1>
-                                        <!-- Post Meta  -->
-                                        <div class="post-meta-wrapper">
-                                            <div class="post-meta">
-                                                <div class="post-author-avatar border-rounded">
-                                                    <img src="~/img/dmface_576.jpg" alt="Author Images" style="height:80px;width:70px">
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="post-author-name">
-                                                        <a class="hover-flip-item-wrapper" href="author.html">
-                                                            <span class="hover-flip-item">
-                                                                <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
-                                                            </span>
-                                                        </a>
-                                                    </h6>
-                                                    <ul class="post-meta-list">
-                                                        <li>@Model.CreatedDate.ToString("MMM dd, yyyy")</li>
-                                                        <li>@Model.Comments.Count @(Model.Comments.Count == 1 ? "comment" : "comments")</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End Post Content  -->
-                                </div>
-                                <!-- End Single Slide  -->
-                            </div>
-                        </div>
-                    </div>
+<div class="container">
+<div class="row">
+<div class="col-lg-8 offset-lg-2">
+<!-- Start Banner Area -->
+<div class="banner banner-single-post post-formate post-layout pb--40">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <!-- Start Single Slide  -->
+        <div class="content-block">
+          <!-- Start Post Content  -->
+          <div class="post-content">
+            @foreach (var category in (await _BlogPostService.GetCategoriesAsync()).Take(1))
+            {
+              <div class="post-cat">
+                <div class="post-cat-list">
+                  <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-id="@category.Id" asp-controller="Categories">
+                    <span class="hover-flip-item">
+                      <span data-text="@Model.Category?.Name">@Model.Category?.Name</span>
+                    </span>
+                  </a>
                 </div>
-                <!-- End Banner Area -->
-                <!-- Start Blog Details  -->
-                <div class="axil-post-details">
-                    <p class="has-medium-font-size">
-                        @Model.Abstract
-                    </p>
-                    <figure class="wp-block-image alignwide text-center">
-                        <img class="img-fluid rounded-3 m-2" style="max-height: 400px;"
-                             src="@_ImageService.ConvertByteArrayToFile(Model.ImageData,Model.ImageType,(int)DefaultImage.BlogPostImage)" id="blogImage">
-                    </figure>
+              </div>
+            }
+            <h1 class="title">
+              @Model.Title
+            </h1>
+            <!-- Post Meta  -->
+            <div class="post-meta-wrapper">
+              <div class="post-meta">
+                <div class="post-author-avatar border-rounded">
+                  <img src="~/img/dmface_576.jpg" alt="Author Images" style="height: 80px; width: 70px">
+                </div>
+                <div class="content">
+                  <h6 class="post-author-name">
+                    <a class="hover-flip-item-wrapper" href="author.html">
+                      <span class="hover-flip-item">
+                        <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
+                      </span>
+                    </a>
+                  </h6>
+                  <ul class="post-meta-list">
+                    <li>@Model.CreatedDate.ToString("MMM dd, yyyy")</li>
+                    <li>@Model.Comments.Count @(Model.Comments.Count == 1 ? "comment" : "comments")</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Post Content  -->
+        </div>
+        <!-- End Single Slide  -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Banner Area -->
+<!-- Start Blog Details  -->
+<div class="axil-post-details">
+  <p class="has-medium-font-size">
+    @Model.Abstract
+  </p>
+  <figure class="wp-block-image alignwide text-center">
+    <img class="img-fluid rounded-3 m-2" style="max-height: 400px;"
+         src="@_ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType, (int)DefaultImage.BlogPostImage)" id="blogImage">
+  </figure>
 
-                    @Html.Raw(Model.Content)
+  @Html.Raw(Model.Content)
 
-                    <div class="tagcloud">
-                        @foreach (Tag tag in Model.Tags)
-                        {
-                            <a asp-action="Details" asp-controller="Tags" asp-route-tagId="@tag.Id">@tag.Name</a>
-                        }
-                    </div>
-                    <div class="social-share-block">
-                        <div class="post-like">
-                            <a id="likesButton">
-                                @if (isLiked)
-                                {
-                                    <i id="faThumb" class="fal fa-thumbs-up" style="background-color: red;color:white;border-color:white"></i>
-                                }
-                                else
-                                {
-                                    <i id="faThumb" class="fal fa-thumbs-up"></i>
-                                }
+  <div class="tagcloud">
+    @foreach (var tag in Model.Tags)
+    {
+      <a asp-action="Details" asp-controller="Tags" asp-route-tagId="@tag.Id">@tag.Name</a>
+    }
+  </div>
+  <div class="social-share-block">
+    <div class="post-like">
+      <a id="likesButton">
+        @if (isLiked)
+        {
+          <i id="faThumb" class="fal fa-thumbs-up" style="background-color: red; border-color: white; color: white;"></i>
+        }
+        else
+        {
+          <i id="faThumb" class="fal fa-thumbs-up"></i>
+        }
 
-                                <span id="numLikes">@Model.Likes.Where(l=>l.IsLiked==true).Count() Likes</span>
-                            </a>
-                        </div>
-                        <ul class="social-icon icon-rounded-transparent md-size">
-                            <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
-                            <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
-                            <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
-                        </ul>
-                    </div>
-                    <!-- Start Author  -->
-                    <div class="about-author">
-                        <div class="media">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/img/dmface_576.jpg" alt="Author Images" style="height:120px;width:100px">
-                                </a>
-                            </div>
-                            <div class="media-body">
-                                <div class="author-info">
-                                    <h5 class="title">
-                                        <a class="hover-flip-item-wrapper" href="#">
-                                            <span class="hover-flip-item">
-                                                <span data-text="Blog Author">Daniel Monastirsky</span>
-                                            </span>
-                                        </a>
-                                    </h5>
-                                    <span class="b3 subtitle">Junior Software Developer</span>
-                                </div>
-                                <div class="content">
-                                    <p class="b1 description">
-                                        I'm Daniel Monastirsky, a 23 year old coder doing my best to adapt to the new software languages we are presented with.
-                                        I was a Motorsports Engineer for over six years and thoroughly enjoyed the work but travelling cross country every few weeks and living out of hotels can be tiresome.
-                                        Being young in the software field can be great because you can learn a variety of new languages that have been introduced in the past few decades without having to completely overwrite previous thinking.
-                                        Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
-                                    </p>
-                                    <ul class="social-share-transparent size-md">
-                                        <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
-                                        <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
-                                        <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Author  -->
-                    <!-- Start Comment Form Area  -->
-                    <div class="axil-comment-area">
+        <span id="numLikes">@Model.Likes.Where(l => l.IsLiked).Count() Likes</span>
+      </a>
+    </div>
+    <ul class="social-icon icon-rounded-transparent md-size">
+      <li>
+        <a href="https://www.instagram.com/donmonfon/">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.github.com/danvitmon">
+          <i class="fab fa-github"></i>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Start Author  -->
+  <div class="about-author">
+    <div class="media">
+      <div class="thumbnail">
+        <a href="#">
+          <img src="~/img/dmface_576.jpg" alt="Author Images" style="height: 120px; width: 100px">
+        </a>
+      </div>
+      <div class="media-body">
+        <div class="author-info">
+          <h5 class="title">
+            <a class="hover-flip-item-wrapper" href="#">
+              <span class="hover-flip-item">
+                <span data-text="Blog Author">Daniel Monastirsky</span>
+              </span>
+            </a>
+          </h5>
+          <span class="b3 subtitle">Junior Software Developer</span>
+        </div>
+        <div class="content">
+          <p class="b1 description">
+            I'm Daniel Monastirsky, a 23 year old coder doing my best to adapt to the new software languages we are presented with.
+            I was a Motorsports Engineer for over six years and thoroughly enjoyed the work but travelling cross country every few weeks and living out of hotels can be tiresome.
+            Being young in the software field can be great because you can learn a variety of new languages that have been introduced in the past few decades without having to completely overwrite previous thinking.
+            Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
+          </p>
+          <ul class="social-share-transparent size-md">
+            <li>
+              <a href="https://www.instagram.com/donmonfon/">
+                <i class="fab fa-instagram"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.github.com/danvitmon">
+                <i class="fab fa-github"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Author  -->
+  <!-- Start Comment Form Area  -->
+  <div class="axil-comment-area">
 
-                        <!-- Start Comment Respond  -->
-                        @if (User.Identity!.IsAuthenticated)
-                        {
-                            <div class="comment-respond">
-                                <h4 class="title">Post a comment</h4>
-                                <form asp-action="Create" asp-controller="Comments">
-                                    <input type="hidden" name="BlogPostId" value="@Model.Id" />
-                                    <div class="row row-md-10">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <textarea id="editor" class="form-control" name="body"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-submit cerchio">
-                                            <input name="submit" type="submit" id="submit" class="axil-button button-rounded" value="Post your comment">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="axil-total-comment-post">
-                                @*<div class="title">
+    <!-- Start Comment Respond  -->
+    @if (User.Identity!.IsAuthenticated)
+    {
+      <div class="comment-respond">
+        <h4 class="title">Post a comment</h4>
+        <form asp-action="Create" asp-controller="Comments">
+          <input type="hidden" name="BlogPostId" value="@Model.Id"/>
+          <div class="row row-md-10">
+            <div class="col-12">
+              <div class="form-group">
+                <textarea id="editor" class="form-control" name="body"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="form-submit cerchio">
+              <input name="submit" type="submit" id="submit" class="axil-button button-rounded" value="Post your comment">
+            </div>
+          </div>
+        </form>
+      </div>
+    }
+    else
+    {
+      <div class="axil-total-comment-post">
+        @*<div class="title">
                             <h4 class="mb--0">30+ Comments</h4>
                             </div>*@
-                                <div class="add-comment-button cerchio">
-                                    <a class="axil-button button-rounded" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Details", "BlogPosts", new { id = Model.Id })" tabindex="0"><span>Login to Add Your Comment</span></a>
-                                </div>
-                            </div>
-                        }
-                        <!-- End Comment Respond  -->
-                        <!-- Start Comment Area  -->
-                        <div class="axil-comment-area">
-                            <h4 class="title">@Model.Comments.Count comments</h4>
-                            <ul class="comment-list">
-                                @foreach (var comment in Model.Comments)
-                                {
-                                    <!-- Start Single Comment  -->
-                                    <li class="comment">
-                                        <div class="comment-body">
-                                            <div class="single-comment">
-                                                <div class="comment-img">
-                                                    <img src="@_ImageService.ConvertByteArrayToFile(@comment.Author?.ImageData,@comment.Author?.ImageType,(int)DefaultImage.BlogUserImage)" alt="Author Images" style="height:40px;width:40px">
-                                                </div>
-                                                <div class="comment-inner">
-                                                    <h6 class="commenter">
-                                                        <a class="hover-flip-item-wrapper" href="#">
-                                                            <span class="hover-flip-item">
-                                                                <span data-text="@comment.Author?.FullName">@comment.Author</span>
-                                                            </span>
-                                                        </a>
-                                                    </h6>
-                                                    <div class="comment-meta">
-                                                        <div class="time-spent">@comment.Created</div>
-                                                    </div>
-                                                    <div class="comment-text">
-                                                        <p class="b2">
-                                                            @Html.Raw(comment.Body)
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <!-- End Single Comment  -->
-                                }
-                            </ul>
-                        </div>
-                        <!-- End Comment Area  -->
-                    </div>
-                    <!-- End Comment Form Area  -->
-
-                </div>
-                <!-- End Blog Details  -->
-            </div>
+        <div class="add-comment-button cerchio">
+          <a class="axil-button button-rounded" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Details", "BlogPosts", new { id = Model.Id })" tabindex="0">
+            <span>Login to Add Your Comment</span>
+          </a>
         </div>
+      </div>
+    }
+    <!-- End Comment Respond  -->
+    <!-- Start Comment Area  -->
+    <div class="axil-comment-area">
+      <h4 class="title">@Model.Comments.Count comments</h4>
+      <ul class="comment-list">
+        @foreach (var comment in Model.Comments)
+        {
+          <!-- Start Single Comment  -->
+          <li class="comment">
+            <div class="comment-body">
+              <div class="single-comment">
+                <div class="comment-img">
+                  <img src="@_ImageService.ConvertByteArrayToFile(comment.Author?.ImageData, comment.Author?.ImageType, (int)DefaultImage.BlogUserImage)" alt="Author Images" style="height: 40px; width: 40px">
+                </div>
+                <div class="comment-inner">
+                  <h6 class="commenter">
+                    <a class="hover-flip-item-wrapper" href="#">
+                      <span class="hover-flip-item">
+                        <span data-text="@comment.Author?.FullName">@comment.Author</span>
+                      </span>
+                    </a>
+                  </h6>
+                  <div class="comment-meta">
+                    <div class="time-spent">@comment.Created</div>
+                  </div>
+                  <div class="comment-text">
+                    <p class="b2">
+                      @Html.Raw(comment.Body)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!-- End Single Comment  -->
+        }
+      </ul>
     </div>
+    <!-- End Comment Area  -->
+  </div>
+  <!-- End Comment Form Area  -->
+
+</div>
+<!-- End Blog Details  -->
+</div>
+</div>
+</div>
 </div>
 <!-- End Post Single Wrapper  -->
+
 @section scripts{
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <!--CK Editor-->
-    <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
-    <script>
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+  <!--CK Editor-->
+  <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
+  <script>
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 licenseKey: '',
@@ -251,9 +276,9 @@
             });;
     </script>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
         @{
-            string userId = _UserManager.GetUserId(User)!;
+          var userId = _UserManager.GetUserId(User)!;
         }
 
             let userId = '@userId';
@@ -280,7 +305,7 @@
 
                     $.ajax({
                         type: 'POST',
-                        url: '@Url.Action("LikeBlogPost","BlogPosts")',
+                        url: '@Url.Action("LikeBlogPost", "BlogPosts")',
                         data: args,
                         success: function (result) {
                             let data = result.isLiked;

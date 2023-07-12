@@ -1,9 +1,8 @@
-﻿namespace Blog.Enums
+﻿namespace Blog.Enums;
+
+public enum DefaultImage
 {
-    public enum DefaultImage
-    {
-        BlogUserImage = 1,
-        BlogPostImage = 2,
-        CategoryImage = 3
-    }
+  BlogUserImage = 1,
+  BlogPostImage = 2,
+  CategoryImage = 3
 }

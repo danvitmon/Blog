@@ -1,96 +1,109 @@
-﻿@using Blog.Enums;
-@using Blog.Services.Interfaces;
-
+﻿@using Blog.Services.Interfaces
+@using Blog.Enums
 @inject IImageService _ImageService
 @inject IBlogService _BlogService
 
 <div class="col-lg-4 col-xl-4 mt_md--40 mt_sm--40">
-    <!-- Start Sidebar Area  -->
-    <div class="sidebar-inner">
+  <!-- Start Sidebar Area  -->
+  <div class="sidebar-inner">
 
-        <!-- Start Single Widget  -->
-        <div class="axil-single-widget widget widget_categories mb--30">
-            <ul>
-                @foreach (Category category in (await _BlogService.GetCategoriesAsync()).Take(4))
-                {
-                    <li class="cat-item">
-                        <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
-                            <div class="thumbnail">
-                                <img src="@_ImageService.ConvertByteArrayToFile(category.ImageData,category.ImageType,(int)DefaultImage.CategoryImage)" alt="" />
-                            </div>
-                        </a>
-                        <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
-                            <div class="content">
-                                <h5 class="title">@category.Name</h5>
-                            </div>
-                        </a>
+    <!-- Start Single Widget  -->
+    <div class="axil-single-widget widget widget_categories mb--30">
+      <ul>
+        @foreach (var category in (await _BlogService.GetCategoriesAsync()).Take(4))
+        {
+          <li class="cat-item">
+            <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
+              <div class="thumbnail">
+                <img src="@_ImageService.ConvertByteArrayToFile(category.ImageData, category.ImageType, (int)DefaultImage.CategoryImage)" alt=""/>
+              </div>
+            </a>
+            <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
+              <div class="content">
+                <h5 class="title">@category.Name</h5>
+              </div>
+            </a>
 
-                    </li>
-                }
+          </li>
+        }
 
-            </ul>
-        </div>
-        <!-- End Single Widget  -->
-        <!-- Start Single Widget  -->
-        <div class="axil-single-widget widget widget_search mb--30">
-            <h5 class="widget-title">Search</h5>
-            <form asp-action="SearchIndex" asp-controller="Home" class="header-search-form d-sm-block d-none">
-                <div class="axil-search form-group">
-                    <button type="submit" class="search-button"><i class="fal fa-search"></i></button>
-                    <input type="text" class="form-control" placeholder="Search" name="searchString">
-                </div>
-            </form>
-        </div>
-        <!-- End Single Widget  -->
-        <!-- Start Single Widget  -->
-        <div class="axil-single-widget widget widget_postlist mb--30">
-            <h5 class="widget-title">Popular Posts</h5>
-            <!-- Start Post List  -->
-            <div class="post-medium-block">
-
-                @foreach (BlogPost blogPost in (await _BlogService.GetPopularBlogPostsAsync(3)))
-                {
-                    <!-- Start Single Post  -->
-                    <div class="content-block post-medium mb--20">
-                        <div class="post-thumbnail">
-                            <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
-                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData,blogPost.ImageType,(int)DefaultImage.BlogPostImage)" alt="Post Images">
-                            </a>
-                        </div>
-                        <div class="post-content">
-                            <h6 class="title">
-                                <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
-                                    @blogPost.Title
-                                </a>
-                            </h6>
-                            <div class="post-meta">
-                                <ul class="post-meta-list">
-                                    <li>@blogPost.CreatedDate.ToString("MMM dd, yyyy")</li>
-                                    <li>@blogPost.Comments.Count Comments</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Single Post  -->
-                }
-
-            </div>
-            <!-- End Post List  -->
-
-        </div>
-        <!-- End Single Widget  -->
-        <!-- Start Single Widget  -->
-        <div class="axil-single-widget widget widget_social mb--30">
-            <h5 class="widget-title">Stay In Touch</h5>
-            <!-- Start Post List  -->
-            <ul class="social-icon md-size justify-content-center">
-                <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
-                <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
-                <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
-            </ul>
-            <!-- End Post List  -->
-        </div>
-        <!-- End Single Widget  -->
+      </ul>
     </div>
-    <!-- End Sidebar Area  -->
+    <!-- End Single Widget  -->
+    <!-- Start Single Widget  -->
+    <div class="axil-single-widget widget widget_search mb--30">
+      <h5 class="widget-title">Search</h5>
+      <form asp-action="SearchIndex" asp-controller="Home" class="header-search-form d-sm-block d-none">
+        <div class="axil-search form-group">
+          <button type="submit" class="search-button">
+            <i class="fal fa-search"></i>
+          </button>
+          <input type="text" class="form-control" placeholder="Search" name="searchString">
+        </div>
+      </form>
+    </div>
+    <!-- End Single Widget  -->
+    <!-- Start Single Widget  -->
+    <div class="axil-single-widget widget widget_postlist mb--30">
+      <h5 class="widget-title">Popular Posts</h5>
+      <!-- Start Post List  -->
+      <div class="post-medium-block">
+
+        @foreach (var blogPost in await _BlogService.GetPopularBlogPostsAsync(3))
+        {
+          <!-- Start Single Post  -->
+          <div class="content-block post-medium mb--20">
+            <div class="post-thumbnail">
+              <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
+                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+              </a>
+            </div>
+            <div class="post-content">
+              <h6 class="title">
+                <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
+                  @blogPost.Title
+                </a>
+              </h6>
+              <div class="post-meta">
+                <ul class="post-meta-list">
+                  <li>@blogPost.CreatedDate.ToString("MMM dd, yyyy")</li>
+                  <li>@blogPost.Comments.Count Comments</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- End Single Post  -->
+        }
+
+      </div>
+      <!-- End Post List  -->
+
+    </div>
+    <!-- End Single Widget  -->
+    <!-- Start Single Widget  -->
+    <div class="axil-single-widget widget widget_social mb--30">
+      <h5 class="widget-title">Stay In Touch</h5>
+      <!-- Start Post List  -->
+      <ul class="social-icon md-size justify-content-center">
+        <li>
+          <a href="https://www.instagram.com/donmonfon/">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.github.com/danvitmon">
+            <i class="fab fa-github"></i>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+        </li>
+      </ul>
+      <!-- End Post List  -->
+    </div>
+    <!-- End Single Widget  -->
+  </div>
+  <!-- End Sidebar Area  -->
 </div>
