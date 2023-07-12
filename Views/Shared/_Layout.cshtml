@@ -79,7 +79,7 @@
                                     <li class="menu-item-has-children">
                                         <a asp-controller="Home" asp-action="Index">Home</a>
                                     </li>
-                                    @if (User.Identity!.IsAuthenticated && !User.IsInRole("Admin"))
+                                    @if (!User.IsInRole("Admin"))
                                     {
                                         <li class="menu-item-has-children">
                                             <a href="#">Posts</a>
@@ -289,11 +289,11 @@
                         <div class="col-lg-12">
                             <!-- Start Post List  -->
                             <div class="inner d-flex align-items-center flex-wrap">
-                                <h5 class="follow-title mb--0 mr--20">Follow Us</h5>
+                                <h5 class="follow-title mb--0 mr--20">Follow Me</h5>
                                 <ul class="social-icon color-tertiary md-size justify-content-start">
-                                    <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
-                                    <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
-                                    <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
+                                    <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                                    <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
                                 </ul>
                             </div>
                             <!-- End Post List  -->
@@ -308,17 +308,17 @@
                     <div class="row align-items-center">
                         <div class="col-lg-9 col-md-12">
                             <div class="copyright-left">
-                                <div class="logo">
+                                @*<div class="logo">
                                     <a href="index.html">
                                         <img class="dark-logo" src="~/IMG/BLOGGED IN LIGHT.png" alt="Logo Images">
                                         <img class="light-logo" src="~/IMG/BLOGGED IN DARK2.png" alt="Logo Images">
                                     </a>
-                                </div>
+                                </div>*@
                                 <ul class="mainmenu justify-content-start">
                                     <li>
                                         <a class="hover-flip-item-wrapper" asp-controller="Home" asp-action="ContactMe">
                                             <span class="hover-flip-item">
-                                                <span data-text="Contact Us">Contact Us</span>
+                                                <span data-text="Contact Me">Contact Me</span>
                                             </span>
                                         </a>
                                     </li>

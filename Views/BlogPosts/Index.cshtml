@@ -1,21 +1,16 @@
-﻿@using Blog.Enums;
+﻿@using Microsoft.AspNetCore.Identity;
+
+@using Blog.Enums;
 @using Blog.Services.Interfaces;
-@using Microsoft.AspNetCore.Identity;
+
 @model IEnumerable<Blog.Models.BlogPost>
 
-@inject IImageService _ImageService
-@inject IBlogService _BlogPostService
+@inject IImageService         _ImageService
+@inject IBlogService          _BlogPostService
 @inject UserManager<BlogUser> _UserManager
 
 @{
     ViewData["Title"] = "Index";
-}
-
-@if (User.IsInRole("Admin"))
-{
-    <div class="align-items-center">
-        <a asp-action="Create">Create New</a>
-    </div>
 }
 
 <div class="axil-post-list-area axil-section-gap bg-color-white">
@@ -82,8 +77,6 @@
                     </div>
                     <!-- End Post List  -->
                 }
-
-
 
             </div>
         </div>
