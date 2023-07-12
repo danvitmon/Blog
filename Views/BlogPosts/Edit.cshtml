@@ -7,91 +7,91 @@
 @inject IBlogService _BlogPostService
 
 @{
-    ViewData["Title"] = "Edit";
+  ViewData["Title"] = "Edit";
 }
 <main class="container mt-5">
-    <form asp-action="Edit" enctype="multipart/form-data" method="post">
-        <input type="hidden" asp-for="ImageData" />
-        <input type="hidden" asp-for="ImageType" />
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="CreatedDate" />
-        <input type="hidden" asp-for="UpdatedDate" />
+  <form asp-action="Edit" enctype="multipart/form-data" method="post">
+    <input type="hidden" asp-for="ImageData"/>
+    <input type="hidden" asp-for="ImageType"/>
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="CreatedDate"/>
+    <input type="hidden" asp-for="UpdatedDate"/>
 
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="row">
-            <div class="col-12 col-lg-4">
-                <div class="form-group">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Abstract" class="control-label"></label>
-                    <textarea asp-for="Abstract" class="form-control" rows="1"></textarea>
-                    <span asp-validation-for="Abstract" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="CategoryId" class="control-label">Category</label>
-                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ImageFile" class="control-label">Blog Post Image</label>
-                    <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;"
-                         src="@_ImageService.ConvertByteArrayToFile(Model.ImageData,Model.ImageType,(int)DefaultImage.BlogPostImage)" id="blogImage">
-                    <input asp-for="ImageFile" type="file" class="form-control mt-3 pt-2" accept=".png,.jpg,.jpeg,.gif"
-                           onchange="document.getElementById('blogImage').src = window.URL.createObjectURL(this.files[0])" />
-                </div>
-            </div>
-            <div class="col-12 col-lg-8">
-                <div class="form-group">
-                    <label asp-for="Content" class="control-label"></label>
-                    <textarea asp-for="Content" class="editor form-control"></textarea>
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
-                <div class="form-group" id="tagContainer">
-                    <label asp-for="Tags"></label>
-                    <input class="form-control" type="text" id="tagInput" name="StringTags" autocomplete="off" value="@ViewBag.Tags" />
-                    <div class="tagcloud axil-single-widget mt-2">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <label asp-for="Title" class="control-label"></label>
+          <input asp-for="Title" class="form-control"/>
+          <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+          <label asp-for="Abstract" class="control-label"></label>
+          <textarea asp-for="Abstract" class="form-control" rows="1"></textarea>
+          <span asp-validation-for="Abstract" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+          <label asp-for="CategoryId" class="control-label">Category</label>
+          <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+        </div>
+        <div class="form-group">
+          <label asp-for="ImageFile" class="control-label">Blog Post Image</label>
+          <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;"
+               src="@_ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType, (int)DefaultImage.BlogPostImage)" id="blogImage">
+          <input asp-for="ImageFile" type="file" class="form-control mt-3 pt-2" accept=".png,.jpg,.jpeg,.gif"
+                 onchange="document.getElementById('blogImage').src = window.URL.createObjectURL(this.files[0])"/>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="form-group">
+          <label asp-for="Content" class="control-label"></label>
+          <textarea asp-for="Content" class="editor form-control"></textarea>
+          <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-group" id="tagContainer">
+          <label asp-for="Tags"></label>
+          <input class="form-control" type="text" id="tagInput" name="StringTags" autocomplete="off" value="@ViewBag.Tags"/>
+          <div class="tagcloud axil-single-widget mt-2">
 
-                        @foreach (Tag tag in await _BlogPostService.GetTagsAsync())
-                        {
-                            <a onclick="addTag(this)">@tag.Name</a>
-                        }
+            @foreach (var tag in await _BlogPostService.GetTagsAsync())
+            {
+              <a onclick="addTag(this)">@tag.Name</a>
+            }
 
-                </div>
-            </div>
+          </div>
         </div>
-        </div>
-        <div class="form-group d-flex justify-content-end">
-            <label class="form-check-label me-4 mt-2" asp-for="IsPublished">Publish?</label>
-            <input class="largerCheckbox me-8" type="checkbox" asp-for="IsPublished" />
-            <span asp-validation-for="IsPublished" class="text-danger"></span>
-        </div>
-        <div class="form-group d-flex justify-content-end">
-            <label class="form-check-label me-4 mt-2" asp-for="IsDeleted">Delete?</label>
-            <input class="largerCheckbox me-8" type="checkbox" asp-for="IsDeleted" />
-            <span asp-validation-for="IsDeleted" class="text-danger"></span>
-        </div>
-        <div class="form-group d-flex justify-content-end">
-            <input type="submit" value="Update" class="btn btn-primary" />
-        </div>
-    </form>
-
-
-    <div class="mt-5">
-        <a asp-action="Index">Back to List</a>
+      </div>
     </div>
+    <div class="form-group d-flex justify-content-end">
+      <label class="form-check-label me-4 mt-2" asp-for="IsPublished">Publish?</label>
+      <input class="largerCheckbox me-8" type="checkbox" asp-for="IsPublished"/>
+      <span asp-validation-for="IsPublished" class="text-danger"></span>
+    </div>
+    <div class="form-group d-flex justify-content-end">
+      <label class="form-check-label me-4 mt-2" asp-for="IsDeleted">Delete?</label>
+      <input class="largerCheckbox me-8" type="checkbox" asp-for="IsDeleted"/>
+      <span asp-validation-for="IsDeleted" class="text-danger"></span>
+    </div>
+    <div class="form-group d-flex justify-content-end">
+      <input type="submit" value="Update" class="btn btn-primary"/>
+    </div>
+  </form>
+
+
+  <div class="mt-5">
+    <a asp-action="Index">Back to List</a>
+  </div>
 </main>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
 
-    <!--CK Editor-->
-    <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
+  <!--CK Editor-->
+  <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
 
-    <script>
+  <script>
         ClassicEditor
             .create(document.querySelector('.editor'), {
                 licenseKey: '',
@@ -101,7 +101,7 @@
             });
     </script>
 
-    <script>
+  <script>
         function addTag(tagElement) {
             let input = document.getElementById('tagInput');
 
@@ -130,7 +130,7 @@
         }
     </script>
 
-    <script>
+  <script>
         // override the jQuery ":contains" selector to make it case insensitive
         jQuery.expr[':'].contains = function (a, i, m) {
             return $(a).text().toUpperCase()

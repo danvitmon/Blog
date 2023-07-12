@@ -1,17 +1,14 @@
-﻿@using Blog.Services.Interfaces;
-@using Blog.Enums;
-@using X.PagedList;
-@using X.PagedList.Mvc.Core;
-@using X.PagedList.Web.Common;
-
-@model IPagedList<Blog.Models.BlogPost>
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@using Blog.Services.Interfaces
+@model X.PagedList.IPagedList<BlogPost>
 
 
-    @inject IImageService _ImageService
+@inject IImageService _ImageService
 
 
 @{
-    ViewData["Title"] = "Home Page";
+  ViewData["Title"] = "Home Page";
 }
 
 <!-- Start Author Area  -->
@@ -39,9 +36,9 @@
                                     Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
                                 </p>
                                 <ul class="social-share-transparent size-md">
-                                   <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                   <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
-                                   <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+                                    <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
+                                    <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -54,38 +51,38 @@
 <!-- End Author Area  -->
 
 <div class="axil-post-list-area axil-section-gap bg-color-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-title">
-                    <h2 class="title mb--40">Articles By This Author</h2>
-                </div>
-            </div>
-            <div class="col-lg-8 col-xl-8">
-                @foreach (BlogPost blogPost in Model)
-                {
-                    <partial name="_BlogCard" model="@blogPost"/>
-                }
-
-                <div>
-                    <div>
-                        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-                    </div>
-
-                    @Html.PagedListPager(Model, pageNum => Url.Action("Index", new { pageNum }),
-                    new PagedListRenderOptions
-                    {
-                        LiElementClasses = new string[] {"my-page-item"},
-                        PageClasses = new string[] {"my-page-link"}
-                    }
-                    )
-
-                </div>
-
-            </div>
-                    <partial name="_SideBar" />
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="page-title">
+          <h2 class="title mb--40">Articles By This Author</h2>
         </div>
+      </div>
+      <div class="col-lg-8 col-xl-8">
+        @foreach (var blogPost in Model)
+        {
+          <partial name="_BlogCard" model="@blogPost"/>
+        }
+
+        <div>
+          <div>
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+          </div>
+
+          @Html.PagedListPager(Model, pageNum => Url.Action("Index", new { pageNum }),
+            new PagedListRenderOptions
+            {
+              LiElementClasses = new[] { "my-page-item" },
+              PageClasses = new[] { "my-page-link" }
+            }
+            )
+
+        </div>
+
+      </div>
+      <partial name="_SideBar"/>
     </div>
+  </div>
 </div>
 
 <!-- End Post List Wrapper  -->

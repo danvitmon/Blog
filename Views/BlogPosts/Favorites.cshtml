@@ -1,80 +1,80 @@
-﻿@using Blog.Enums;
-@using Blog.Services.Interfaces;
-@using Microsoft.AspNetCore.Identity;
-@model IEnumerable<Blog.Models.BlogPost>
+﻿@using Blog.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@using Blog.Enums
+@model IEnumerable<BlogPost>
 
 @inject IImageService _ImageService
 @inject IBlogService _BlogService
 @inject UserManager<BlogUser> _UserManager
 
 @{
-    string? blogUserId = _UserManager.GetUserId(User);
+  var blogUserId = _UserManager.GetUserId(User);
 
-    ViewData["Title"] = "Favorites";
+  ViewData["Title"] = "Favorites";
 }
 
 <h1>Favorites</h1>
 
 <div class="axil-post-list-area axil-section-gap bg-color-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-title">
-                    <h2 class="title mb--40">Articles By This Author</h2>
-                </div>
-            </div>
-            <div class="col-lg-8 col-xl-8">
-                @foreach (BlogPost blogPost in (await _BlogService.GetFavoriteBlogPostsAsync(blogUserId)))
-                {
-                    <!-- Start Post List  -->
-                    <div class="content-block post-list-view mt--30">
-                        <div class="post-thumbnail">
-                            <a asp-action="Details" asp-route-slug="@blogPost.Slug">
-                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData,blogPost.ImageType,(int)(DefaultImage.BlogPostImage))" alt="Post Images">
-                            </a>
-                        </div>
-                        <div class="post-content">
-                            @foreach (Category category in (await _BlogService.GetCategoriesAsync()).Take(1))
-                            {
-                                <div class="post-cat">
-                                    <div class="post-cat-list">
-                                        <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-id="@category.Id" asp-controller="Categories">
-                                            <span class="hover-flip-item">
-                                                <span data-text="@blogPost.Category?.Name">@blogPost.Category?.Name</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-                            <h4 class="title">
-                                <a asp-action="Details" asp-route-slug="@blogPost.Slug">
-                                    @blogPost.Title
-                                </a>
-                            </h4>
-                            <div class="post-meta-wrapper">
-                                <div class="post-meta">
-                                    <div class="content">
-                                        <h6 class="post-author-name">
-                                            <a class="hover-flip-item-wrapper" href="author.html">
-                                                <span class="hover-flip-item">
-                                                    <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
-                                                </span>
-                                            </a>
-                                        </h6>
-                                        <ul class="post-meta-list">
-                                            <li>@blogPost.CreatedDate.ToString("MMM dd, yyyy") </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Post List  -->
-                }
-
-
-
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="page-title">
+          <h2 class="title mb--40">Articles By This Author</h2>
         </div>
+      </div>
+      <div class="col-lg-8 col-xl-8">
+        @foreach (var blogPost in await _BlogService.GetFavoriteBlogPostsAsync(blogUserId))
+        {
+          <!-- Start Post List  -->
+          <div class="content-block post-list-view mt--30">
+            <div class="post-thumbnail">
+              <a asp-action="Details" asp-route-slug="@blogPost.Slug">
+                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+              </a>
+            </div>
+            <div class="post-content">
+              @foreach (var category in (await _BlogService.GetCategoriesAsync()).Take(1))
+              {
+                <div class="post-cat">
+                  <div class="post-cat-list">
+                    <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-id="@category.Id" asp-controller="Categories">
+                      <span class="hover-flip-item">
+                        <span data-text="@blogPost.Category?.Name">@blogPost.Category?.Name</span>
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              }
+              <h4 class="title">
+                <a asp-action="Details" asp-route-slug="@blogPost.Slug">
+                  @blogPost.Title
+                </a>
+              </h4>
+              <div class="post-meta-wrapper">
+                <div class="post-meta">
+                  <div class="content">
+                    <h6 class="post-author-name">
+                      <a class="hover-flip-item-wrapper" href="author.html">
+                        <span class="hover-flip-item">
+                          <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
+                        </span>
+                      </a>
+                    </h6>
+                    <ul class="post-meta-list">
+                      <li>@blogPost.CreatedDate.ToString("MMM dd, yyyy") </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Post List  -->
+        }
+
+
+
+      </div>
     </div>
+  </div>
 </div>
