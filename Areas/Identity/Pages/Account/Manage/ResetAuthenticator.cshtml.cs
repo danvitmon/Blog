@@ -32,7 +32,7 @@ public class ResetAuthenticatorModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     return Page();
   }
@@ -41,12 +41,12 @@ public class ResetAuthenticatorModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await _userManager.SetTwoFactorEnabledAsync  (user, false);
     await _userManager.ResetAuthenticatorKeyAsync(user);
 
-    var userId = await _userManager.GetUserIdAsync(user);
+    var userId = await _userManager.GetUserIdAsync(user); // Keep for debugging purposes
     _logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
 
     await _signInManager.RefreshSignInAsync(user);

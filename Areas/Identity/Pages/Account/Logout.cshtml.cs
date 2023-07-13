@@ -25,7 +25,7 @@ public class LogoutModel : PageModel
     _logger.LogInformation("User logged out.");
 
     if (returnUrl != null)
-     return LocalRedirect(returnUrl);
+      return LocalRedirect(returnUrl);
 
     return RedirectToPage();
   }

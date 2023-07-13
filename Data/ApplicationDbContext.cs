@@ -7,10 +7,7 @@ namespace Blog.Data;
 
 public class ApplicationDbContext : IdentityDbContext<BlogUser>
 {
-  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
-  {
-  }
+  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
   public virtual DbSet<BlogPost> BlogPosts  { get; set; } = default!;
   public virtual DbSet<Comment>  Comments   { get; set; } = default!;

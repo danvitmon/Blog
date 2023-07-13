@@ -20,15 +20,11 @@ public class HomeController : Controller
   private readonly IConfiguration          _configuration;
   private readonly ApplicationDbContext    _context;
   private readonly IEmailSender            _emailService;
-  private readonly IImageService           _imageService;
-  private readonly ILogger<HomeController> _logger;
   private readonly UserManager<BlogUser>   _userManager;
 
-  public HomeController(ILogger<HomeController> logger, IImageService imageService, ApplicationDbContext context, IBlogService blogService, UserManager<BlogUser> userManager, IConfiguration configuration, IEmailSender emailSender)
+  public HomeController(ApplicationDbContext context, IBlogService blogService, UserManager<BlogUser> userManager, IConfiguration configuration, IEmailSender emailSender)
   {
-    _logger        = logger;
     _context       = context;
-    _imageService  = imageService;
     _blogService   = blogService;
     _userManager   = userManager;
     _userManager   = userManager;
@@ -39,7 +35,6 @@ public class HomeController : Controller
   public async Task<IActionResult> Index(int? pageNum)
   {
     var pageSize  = 3;
-    var page      = pageNum ?? 1;
     var blogPosts = await _context.BlogPosts.Include(b => b.Category).ToPagedListAsync(pageNum, pageSize);
 
     return View(blogPosts);
@@ -68,7 +63,7 @@ public class HomeController : Controller
     var blogUserId = _userManager.GetUserId(User);
 
     if (blogUserId == null) 
-     return NotFound();
+      return NotFound();
 
     var blogUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == blogUserId);
 

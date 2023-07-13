@@ -15,10 +15,7 @@ public class ConfirmEmailModel : PageModel
 {
   private readonly UserManager<BlogUser> _userManager;
 
-  public ConfirmEmailModel(UserManager<BlogUser> userManager)
-  {
-    _userManager = userManager;
-  }
+  public ConfirmEmailModel(UserManager<BlogUser> userManager) => _userManager = userManager;
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -29,11 +26,11 @@ public class ConfirmEmailModel : PageModel
   public async Task<IActionResult> OnGetAsync(string userId, string code)
   {
     if (userId == null || code == null) 
-     return RedirectToPage("/Index");
+      return RedirectToPage("/Index");
 
     var user = await _userManager.FindByIdAsync(userId);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{userId}'.");
+      return NotFound($"Unable to load user with ID '{userId}'.");
 
     code       = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
     var result = await _userManager.ConfirmEmailAsync(user, code);

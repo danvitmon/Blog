@@ -53,10 +53,9 @@ public class RegisterModel : PageModel
   /// </summary>
   public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-
   public async Task OnGetAsync(string returnUrl = null)
   {
-    ReturnUrl = returnUrl;
+    ReturnUrl      = returnUrl;
     ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
   }
 
@@ -87,9 +86,7 @@ public class RegisterModel : PageModel
         await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
         if (_userManager.Options.SignIn.RequireConfirmedAccount)
-        {
           return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
-        }
 
         await _signInManager.SignInAsync(user, false);
 
@@ -97,7 +94,7 @@ public class RegisterModel : PageModel
       }
 
       foreach (var error in result.Errors) 
-       ModelState.AddModelError(string.Empty, error.Description);
+        ModelState.AddModelError(string.Empty, error.Description);
     }
 
     return Page();
@@ -117,7 +114,7 @@ public class RegisterModel : PageModel
     catch
     {
       throw new InvalidOperationException($"Can't create an instance of '{nameof(BlogUser)}'. " +
-                                          $"Ensure that '{nameof(BlogUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                                          $"Ensure that '{nameof(BlogUser)}' is not an abstract class and has a parameter-less constructor, or alternatively " +
                                           "override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
     }
   }

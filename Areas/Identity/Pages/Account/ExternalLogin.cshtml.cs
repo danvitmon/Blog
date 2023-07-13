@@ -62,10 +62,7 @@ public class ExternalLoginModel : PageModel
   [TempData]
   public string ErrorMessage { get; set; }
 
-  public IActionResult OnGet()
-  {
-    return RedirectToPage("./Login");
-  }
+  public IActionResult OnGet() => RedirectToPage("./Login");
 
   public IActionResult OnPost(string provider, string returnUrl = null)
   {
@@ -78,7 +75,7 @@ public class ExternalLoginModel : PageModel
 
   public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
   {
-    returnUrl = returnUrl ?? Url.Content("~/");
+    returnUrl ??= Url.Content("~/");
     if (remoteError != null)
     {
       ErrorMessage = $"Error from external provider: {remoteError}";
@@ -98,31 +95,27 @@ public class ExternalLoginModel : PageModel
     var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
     if (result.Succeeded)
     {
-      _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name,
-        info.LoginProvider);
+      _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
 
       return LocalRedirect(returnUrl);
     }
 
     if (result.IsLockedOut)
-     return RedirectToPage("./Lockout");
+      return RedirectToPage("./Lockout");
 
     // If the user does not have an account, then ask the user to create an account.
     ReturnUrl           = returnUrl;
     ProviderDisplayName = info.ProviderDisplayName;
 
     if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
-      Input = new InputModel
-      {
-        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-      };
+      Input = new InputModel { Email = info.Principal.FindFirstValue(ClaimTypes.Email) };
 
     return Page();
   }
 
   public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
   {
-    returnUrl = returnUrl ?? Url.Content("~/");
+    returnUrl ??= Url.Content("~/");
     // Get the information about the user from the external login provider
 
     var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -153,12 +146,11 @@ public class ExternalLoginModel : PageModel
           code            = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
           var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { area = "Identity", userId, code }, Request.Scheme);
 
-          await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+          await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
           // If account confirmation is required, we need to show the link if we don't have a real email sender
           if (_userManager.Options.SignIn.RequireConfirmedAccount)
-           return RedirectToPage("./RegisterConfirmation", new { Input.Email });
+            return RedirectToPage("./RegisterConfirmation", new { Input.Email });
 
           await _signInManager.SignInAsync(user, false, info.LoginProvider);
 
@@ -167,11 +159,11 @@ public class ExternalLoginModel : PageModel
       }
 
       foreach (var error in result.Errors) 
-       ModelState.AddModelError(string.Empty, error.Description);
+        ModelState.AddModelError(string.Empty, error.Description);
     }
 
     ProviderDisplayName = info.ProviderDisplayName;
-    ReturnUrl = returnUrl;
+    ReturnUrl           = returnUrl;
 
     return Page();
   }
@@ -185,7 +177,7 @@ public class ExternalLoginModel : PageModel
     catch
     {
       throw new InvalidOperationException($"Can't create an instance of '{nameof(BlogUser)}'. " +
-                                          $"Ensure that '{nameof(BlogUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                                          $"Ensure that '{nameof(BlogUser)}' is not an abstract class and has a parameter-less constructor, or alternatively " +
                                           "override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
     }
   }

@@ -18,7 +18,6 @@ public class Comment
   [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
   public string? UpdateReason { get; set; }
 
-
   // Foreign Key 1-to-1
   public int               BlogPostId { get; set; }
   public virtual BlogPost? BlogPost   { get; set; }

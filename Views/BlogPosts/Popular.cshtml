@@ -3,8 +3,7 @@
 
 @model IEnumerable<BlogPost>
 
-@inject IBlogService  _BlogService
-@inject IImageService _ImageService
+@inject IImageService ImageService
 
 @{
   ViewData["Title"] = "Popular";
@@ -25,7 +24,7 @@
           <div class="content-block post-list-view mb--20">
             <div class="post-thumbnail">
               <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
-                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+                <img src="@ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
               </a>
             </div>
             <div class="post-content">

@@ -5,12 +5,12 @@
 
 @model IEnumerable<BlogPost>
 
-@inject IImageService         _ImageService
-@inject IBlogService          _BlogService
-@inject UserManager<BlogUser> _UserManager
+@inject IImageService         ImageService
+@inject IBlogService          BlogService
+@inject UserManager<BlogUser> UserManager
 
 @{
-  var blogUserId = _UserManager.GetUserId(User);
+  var blogUserId = UserManager.GetUserId(User);
 
   ViewData["Title"] = "Favorites";
 }
@@ -26,23 +26,23 @@
         </div>
       </div>
       <div class="col-lg-8 col-xl-8">
-        @foreach (var blogPost in await _BlogService.GetFavoriteBlogPostsAsync(blogUserId!))
+        @foreach (var blogPost in await BlogService.GetFavoriteBlogPostsAsync(blogUserId!))
         {
           <!-- Start Post List  -->
           <div class="content-block post-list-view mt--30">
             <div class="post-thumbnail">
               <a asp-action="Details" asp-route-slug="@blogPost.Slug">
-                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+                <img src="@ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
               </a>
             </div>
             <div class="post-content">
-              @foreach (var category in (await _BlogService.GetCategoriesAsync()).Take(1))
+              @foreach (var category in (await BlogService.GetCategoriesAsync()).Take(1))
               {
                 <div class="post-cat">
                   <div class="post-cat-list">
                     <a class="hover-flip-item-wrapper" asp-action="Details" asp-route-categoryId="@blogPost.CategoryId" asp-controller="Categories">
                       <span class="hover-flip-item">
-                        <span data-text="@blogPost.Category?.Name">@blogPost.Category?.Name</span>
+                        <span data-text="@category?.Name">@category?.Name</span>
                       </span>
                     </a>
                   </div>
@@ -73,9 +73,6 @@
           </div>
           <!-- End Post List  -->
         }
-
-
-
       </div>
     </div>
   </div>

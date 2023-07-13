@@ -24,10 +24,9 @@ public class BlogUser : IdentityUser
   // Image Properties
               public byte[]?    ImageData { get; set; }
               public string?    ImageType { get; set; }
-  [NotMapped] public IFormFile? ImageFile { get; set; }
-
+  [NotMapped] public IFormFile? ImageFile { get; set; } // Future extension
 
   // Navigation Properties
-  public virtual ICollection<Comment>  Comments  { get; set; } = new HashSet<Comment>();
+  public virtual ICollection<Comment>  Comments  { get; set; } = new HashSet<Comment>(); // Future extension
   public virtual ICollection<BlogLike> BlogLikes { get; set; } = new HashSet<BlogLike>();
 }

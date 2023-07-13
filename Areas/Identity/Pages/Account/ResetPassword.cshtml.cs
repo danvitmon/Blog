@@ -16,10 +16,7 @@ public class ResetPasswordModel : PageModel
 {
   private readonly UserManager<BlogUser> _userManager;
 
-  public ResetPasswordModel(UserManager<BlogUser> userManager)
-  {
-    _userManager = userManager;
-  }
+  public ResetPasswordModel(UserManager<BlogUser> userManager) => _userManager = userManager;
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -30,14 +27,9 @@ public class ResetPasswordModel : PageModel
   public IActionResult OnGet(string code = null)
   {
     if (code == null)
-    {
       return BadRequest("A code must be supplied for password reset.");
-    }
 
-    Input = new InputModel
-    {
-      Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-    };
+    Input = new InputModel { Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)) };
 
     return Page();
   }
@@ -48,15 +40,15 @@ public class ResetPasswordModel : PageModel
      return Page();
 
     var user = await _userManager.FindByEmailAsync(Input.Email);
-    if (user == null)
-     return RedirectToPage("./ResetPasswordConfirmation");
+    if (user == null) 
+      return RedirectToPage("./ResetPasswordConfirmation");
 
     var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
     if (result.Succeeded) 
-     return RedirectToPage("./ResetPasswordConfirmation");
+      return RedirectToPage("./ResetPasswordConfirmation");
 
     foreach (var error in result.Errors) 
-     ModelState.AddModelError(string.Empty, error.Description);
+      ModelState.AddModelError(string.Empty, error.Description);
 
     return Page();
   }
@@ -80,8 +72,7 @@ public class ResetPasswordModel : PageModel
     ///   directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [Required]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-      MinimumLength = 6)]
+    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     [DataType(DataType.Password)]
     public string Password { get; set; }
 

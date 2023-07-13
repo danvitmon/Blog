@@ -3,11 +3,11 @@
 @using Blog.Services.Interfaces
 @using Blog.Enums
 
-@inject UserManager<BlogUser> _UserManager
-@inject IImageService         _ImageService
+@inject UserManager<BlogUser> UserManager
+@inject IImageService         ImageService
 
 @{
-  var blogUser = User.Identity!.IsAuthenticated ? await _UserManager.GetUserAsync(User) : new BlogUser();
+  var blogUser = User.Identity!.IsAuthenticated ? await UserManager.GetUserAsync(User) : new BlogUser();
 }
 
 <!doctype html>
@@ -75,7 +75,7 @@
                     <div class="col-xl-6 d-none d-xl-block">
                         <div class="mainmenu-wrapper">
                             <nav class="mainmenu-nav">
-                                <!-- Start Mainmanu Nav -->
+                                <!-- Start Main menu Nav -->
                                 <ul class="mainmenu">
                                     <li class="menu-item-has-children">
                                         <a asp-controller="Home" asp-action="Index">Home</a>
@@ -148,7 +148,7 @@
                                     <li><a asp-controller="Home" asp-action="ContactMe">Contact Me</a></li>
 
             </ul>
-            <!-- End Mainmanu Nav -->
+            <!-- End Main menu Nav -->
           </nav>
         </div>
       </div>
@@ -180,7 +180,7 @@
             <li class="nav-item dropdown has-arrow main-drop">
               <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="user-img">
-                  <img src="@_ImageService.ConvertByteArrayToFile(blogUser?.ImageData, blogUser?.ImageType, (int)DefaultImage.BlogUserImage)" alt="">
+                  <img src="@ImageService.ConvertByteArrayToFile(blogUser?.ImageData, blogUser?.ImageType, (int)DefaultImage.BlogUserImage)" alt="">
                   <span class="status online"></span>
                 </span>
                 <span>@blogUser?.FullName</span>

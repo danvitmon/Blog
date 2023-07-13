@@ -65,7 +65,7 @@ public class IndexModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await LoadAsync(user);
 
@@ -76,7 +76,7 @@ public class IndexModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {
@@ -94,9 +94,7 @@ public class IndexModel : PageModel
       user.ImageType = Input.ImageFile.ContentType;
     }
 
-
     await _userManager.UpdateAsync(user);
-
 
     var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
     if (Input.PhoneNumber != phoneNumber)
@@ -130,14 +128,12 @@ public class IndexModel : PageModel
     [Display(Name = "First Name")]
     public string FirstName { get; set; }
 
-
     [StringLength(40, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
     [Display(Name = "Last Name")]
     public string LastName { get; set; }
 
-    public byte[] ImageData { get; set; }
-    public string ImageType { get; set; }
-
+                public byte[]    ImageData { get; set; }
+                public string    ImageType { get; set; }
     [NotMapped] public IFormFile ImageFile { get; set; }
 
     [Phone]

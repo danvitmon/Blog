@@ -1,8 +1,8 @@
 ﻿@using Blog.Services.Interfaces
 @using Blog.Enums
 
-@inject IImageService _ImageService
-@inject IBlogService  _BlogService
+@inject IImageService ImageService
+@inject IBlogService  BlogService
 
 <div class="col-lg-4 col-xl-4 mt_md--40 mt_sm--40">
   <!-- Start Sidebar Area  -->
@@ -11,12 +11,12 @@
     <!-- Start Single Widget  -->
     <div class="axil-single-widget widget widget_categories mb--30">
       <ul>
-        @foreach (var category in (await _BlogService.GetCategoriesAsync()).Take(4))
+        @foreach (var category in (await BlogService.GetCategoriesAsync()).Take(4))
         {
           <li class="cat-item">
             <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
               <div class="thumbnail">
-                <img src="@_ImageService.ConvertByteArrayToFile(category.ImageData, category.ImageType, (int)DefaultImage.CategoryImage)" alt=""/>
+                <img src="@ImageService.ConvertByteArrayToFile(category.ImageData, category.ImageType, (int)DefaultImage.CategoryImage)" alt=""/>
               </div>
             </a>
             <a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id" class="inner">
@@ -50,13 +50,13 @@
       <!-- Start Post List  -->
       <div class="post-medium-block">
 
-        @foreach (var blogPost in await _BlogService.GetPopularBlogPostsAsync(3))
+        @foreach (var blogPost in await BlogService.GetPopularBlogPostsAsync(3))
         {
           <!-- Start Single Post  -->
           <div class="content-block post-medium mb--20">
             <div class="post-thumbnail">
               <a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
-                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+                <img src="@ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
               </a>
             </div>
             <div class="post-content">

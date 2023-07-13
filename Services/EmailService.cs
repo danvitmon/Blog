@@ -14,10 +14,7 @@ public class EmailService : IEmailSender
 {
   private readonly EmailSettings _emailSettings;
 
-  public EmailService(IOptions<EmailSettings> emailSettings)
-  {
-    _emailSettings = emailSettings.Value;
-  }
+  public EmailService(IOptions<EmailSettings> emailSettings) => _emailSettings = emailSettings.Value;
 
   public async Task SendEmailAsync(string email, string subject, string htmlMessage)
   {
@@ -29,26 +26,17 @@ public class EmailService : IEmailSender
     newEmail.Sender   = MailboxAddress.Parse(emailAddress);
 
     foreach (var address in email.Split(";")) 
-     newEmail.To.Add(MailboxAddress.Parse(address));
+      newEmail.To.Add(MailboxAddress.Parse(address));
 
-    newEmail.Subject     = subject;
-    var emailBody        = new BodyBuilder();
-    emailBody.HtmlBody   = htmlMessage;
-    newEmail.Body        = emailBody.ToMessageBody();
+    newEmail.Subject = subject;
+    var emailBody    = new BodyBuilder { HtmlBody = htmlMessage };
+    newEmail.Body    = emailBody.ToMessageBody();
+    
     using var smtpClient = new SmtpClient();
 
-    try
-    {
-      await smtpClient.ConnectAsync     (emailHost, emailPort, SecureSocketOptions.StartTls);
-      await smtpClient.AuthenticateAsync(emailAddress, emailPassword);
-      await smtpClient.SendAsync        (newEmail);
-      await smtpClient.DisconnectAsync  (true);
-    }
-    catch (Exception ex)
-    {
-      var error = ex.Message;
-
-      throw;
-    }
+    await smtpClient.ConnectAsync     (emailHost, emailPort, SecureSocketOptions.StartTls);
+    await smtpClient.AuthenticateAsync(emailAddress, emailPassword);
+    await smtpClient.SendAsync        (newEmail);
+    await smtpClient.DisconnectAsync  (true);
   }
 }

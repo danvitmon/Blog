@@ -54,13 +54,9 @@ public class EmailModel : PageModel
   private async Task LoadAsync(BlogUser user)
   {
     var email = await _userManager.GetEmailAsync(user);
-    Email = email;
-
-    Input = new InputModel
-    {
-      NewEmail = email
-    };
-
+    
+    Email            = email;
+    Input            = new InputModel { NewEmail = email };
     IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
   }
 
@@ -68,7 +64,7 @@ public class EmailModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await LoadAsync(user);
 
@@ -79,7 +75,7 @@ public class EmailModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {
@@ -112,7 +108,7 @@ public class EmailModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {

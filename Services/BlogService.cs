@@ -11,10 +11,7 @@ public class BlogService : IBlogService
 {
   private readonly ApplicationDbContext _context;
 
-  public BlogService(ApplicationDbContext context)
-  {
-    _context = context;
-  }
+  public BlogService(ApplicationDbContext context) => _context = context;
 
   public async Task AddTagsToBlogPostAsync(IEnumerable<int?> tagIds, int? blogPostId)
   {
@@ -24,7 +21,8 @@ public class BlogService : IBlogService
     {
       var tag = await _context.Tags.FindAsync(tagId);
 
-      if (blogPost != null && tag != null) blogPost.Tags.Add(tag);
+      if (blogPost != null && tag != null) 
+        blogPost.Tags.Add(tag);
     }
 
     await _context.SaveChangesAsync();
@@ -34,41 +32,33 @@ public class BlogService : IBlogService
   {
     var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == blogPostId);
     if (blogPost == null) 
-     return;
+      return;
 
     var tags = tagNames.Split(',').DistinctBy(s => s.Trim()).ToList();
 
     foreach (var tagName in tags)
     {
       if (string.IsNullOrWhiteSpace(tagName)) 
-       continue;
+        continue;
 
       var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name!.Trim().ToLower() == tagName.Trim().ToLower());
 
       if (tag == null)
       {
-        tag = new Tag
-        {
-          Name = tagName.Trim()
-        };
+        tag = new Tag { Name = tagName.Trim() };
 
         _context.Tags.Add(tag);
       }
 
-      // either way, add the tag to the blog post
+      // Either way, add the tag to the blog post
       blogPost.Tags.Add(tag);
     }
 
-    //save changes to the database
+    // Save changes to the database
     await _context.SaveChangesAsync();
   }
 
-  public async Task<IEnumerable<Category>> GetCategoriesAsync()
-  {
-    IEnumerable<Category> categories = await _context.Categories.ToListAsync();
-
-    return categories;
-  }
+  public async Task<IEnumerable<Category>> GetCategoriesAsync() => await _context.Categories.ToListAsync();
 
   public async Task<IEnumerable<BlogPost>> GetPopularBlogPostsAsync()
   {
@@ -116,9 +106,7 @@ public class BlogService : IBlogService
     IEnumerable<BlogPost> blogPosts = new List<BlogPost>();
 
     if (string.IsNullOrEmpty(searchString))
-    {
       return blogPosts;
-    }
 
     searchString = searchString.Trim().ToLower();
 
@@ -130,11 +118,11 @@ public class BlogService : IBlogService
                                                                   c.Author!.FirstName!.ToLower().Contains(searchString) ||
                                                                   c.Author!.LastName!.ToLower().Contains(searchString)) ||
                                               b.Tags.Any(t => t.Name!.ToLower().Contains(searchString)))
-                                  .Include(b => b.Comments)
+                                  .Include    (b => b.Comments)
                                   .ThenInclude(c => c.Author)
-                                  .Include(b => b.Category)
-                                  .Include(b => b.Tags)
-                                  .Where(b => b.IsDeleted == false && b.IsPublished == true)
+                                  .Include    (b => b.Category)
+                                  .Include    (b => b.Tags)
+                                  .Where      (b => !b.IsDeleted && b.IsPublished)
                                   .AsNoTracking()
                                   .OrderByDescending(b => b.CreatedDate)
                                   .AsEnumerable();
@@ -148,15 +136,13 @@ public class BlogService : IBlogService
     var newSlug = StringHelper.BlogPostSlug(title);
 
     if (blogPostId == null || blogPostId == 0)
-    {
       return !await _context.BlogPosts.AnyAsync(b => b.Slug == newSlug);
-    }
 
     var blogPost = await _context.BlogPosts.AsNoTracking().FirstOrDefaultAsync(b => b.Id == blogPostId);
     var oldSlug  = blogPost?.Slug;
 
     if (!string.Equals(oldSlug, newSlug))
-     return !await _context.BlogPosts.AnyAsync(b => b.Id != blogPost!.Id && b.Slug == newSlug);
+      return !await _context.BlogPosts.AnyAsync(b => b.Id != blogPost!.Id && b.Slug == newSlug);
 
     return true;
   }

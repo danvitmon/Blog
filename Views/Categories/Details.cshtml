@@ -1,13 +1,9 @@
-﻿@using Microsoft.AspNetCore.Identity
-
-@using Blog.Services.Interfaces
+﻿@using Blog.Services.Interfaces
 @using Blog.Enums
 
 @model IEnumerable<BlogPost>
 
-@inject IImageService         _ImageService
-@inject IBlogService          _BlogPostService
-@inject UserManager<BlogUser> _UserManager
+@inject IImageService ImageService
 
 @{
   ViewData["Title"] = "Details";
@@ -28,7 +24,7 @@
           <div class="content-block post-list-view mt--30">
             <div class="post-thumbnail">
               <a asp-action="Details" asp-route-slug="@blogPost.Slug" asp-controller="BlogPosts">
-                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
+                <img src="@ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType, (int)DefaultImage.BlogPostImage)" alt="Post Images">
               </a>
             </div>
             <div class="post-content">
@@ -86,9 +82,6 @@
           </div>
           <!-- End Post List  -->
         }
-
-
-
       </div>
     </div>
   </div>

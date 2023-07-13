@@ -5,7 +5,7 @@
 
 @model IndexModel
 
-@inject IImageService _ImageService
+@inject IImageService ImageService
 
 @{
   ViewData["Title"]      = "Profile";
@@ -46,7 +46,7 @@
         <div class="form-floating">
           <input type="hidden" asp-for="Input.ImageData"/>
 
-          <img id="userImage" class="img-fluid img-thumbnail rounded" src="@_ImageService.ConvertByteArrayToFile(Model.Input.ImageData, Model.Input.ImageType, (int)DefaultImage.BlogUserImage)"/>
+          <img id="userImage" class="img-fluid img-thumbnail rounded" src="@ImageService.ConvertByteArrayToFile(Model.Input.ImageData, Model.Input.ImageType, (int)DefaultImage.BlogUserImage)"/>
 
           <input type="file" asp-for="Input.ImageFile" class="form-control" accept=".png,.jpg,.jpeg,.gif,.tif"
                  style="border: 0px !important; padding: 0px; padding-bottom: 30px; padding-top: 10px;"

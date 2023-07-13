@@ -9,9 +9,10 @@ public class StringHelper
   public static string BlogPostSlug(string? title)
   {
     var output = RemoveAccents(title).ToLower();
-    output     = Regex.Replace(output, @"[^A-Za-z0-9\s-]", "");
-    output     = Regex.Replace(output, @"\s+", " ");
-    output     = Regex.Replace(output, @"\s", "-");
+
+    output = Regex.Replace(output, @"[^A-Za-z0-9\s-]", "");
+    output = Regex.Replace(output, @"\s+", " ");
+    output = Regex.Replace(output, @"\s", "-");
 
     return output;
   }
@@ -19,7 +20,7 @@ public class StringHelper
   private static string RemoveAccents(string? title)
   {
     if (string.IsNullOrWhiteSpace(title)) 
-     return title!;
+      return title!;
 
     title     = title.Normalize(NormalizationForm.FormD);
     var chars = title.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray();

@@ -23,19 +23,19 @@ public class CategoriesController : Controller
   // GET: Categories
   public async Task<IActionResult> Index()
   {
-    return _context.Categories != null ? View(await _context.Categories.ToListAsync()) : Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+    return _context.Categories.Any() ? View(await _context.Categories.ToListAsync()) : Problem("Entity set 'ApplicationDbContext.Categories' is empty.");
   }
 
   // GET: Categories/Details/5
   public async Task<IActionResult> Details(int? id, int? pageNum)
   {
-    if (id == null || _context.Categories == null) 
-     return NotFound();
+    if (id == null || !_context.Categories.Any()) 
+      return NotFound();
 
     var category1 = await _context.Categories.Include(c => c.BlogPosts).FirstOrDefaultAsync(c => c.Id == id);
 
     if (category1 == null) 
-     return NotFound();
+      return NotFound();
 
     var pageSize  = 5;
     var page      = pageNum ?? 1;
@@ -48,10 +48,7 @@ public class CategoriesController : Controller
   }
 
   // GET: Categories/Create
-  public IActionResult Create()
-  {
-    return View();
-  }
+  public IActionResult Create() => View();
 
   // POST: Categories/Create
   // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -74,12 +71,12 @@ public class CategoriesController : Controller
   // GET: Categories/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.Categories == null) 
-     return NotFound();
+    if (id == null || !_context.Categories.Any()) 
+      return NotFound();
 
     var category = await _context.Categories.FindAsync(id);
     if (category == null) 
-     return NotFound();
+      return NotFound();
 
     return View(category);
   }
@@ -92,7 +89,7 @@ public class CategoriesController : Controller
   public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageData,ImageType")] Category category)
   {
     if (id != category.Id)  
-     return NotFound();
+      return NotFound();
 
     if (ModelState.IsValid)
     {
@@ -104,7 +101,7 @@ public class CategoriesController : Controller
       catch (DbUpdateConcurrencyException)
       {
         if (!CategoryExists(category.Id))
-         return NotFound();
+          return NotFound();
 
         throw;
       }
@@ -118,12 +115,12 @@ public class CategoriesController : Controller
   // GET: Categories/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.Categories == null) 
-     return NotFound();
+    if (id == null || !_context.Categories.Any()) 
+      return NotFound();
 
     var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
     if (category == null) 
-     return NotFound();
+      return NotFound();
 
     return View(category);
   }
@@ -134,19 +131,17 @@ public class CategoriesController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.Categories == null) 
-     return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+    if (!_context.Categories.Any()) 
+      return Problem("Entity set 'ApplicationDbContext.Categories' is empty.");
 
     var category = await _context.Categories.FindAsync(id);
-    if (category != null) _context.Categories.Remove(category);
+    if (category != null) 
+      _context.Categories.Remove(category);
 
     await _context.SaveChangesAsync();
 
     return RedirectToAction(nameof(Index));
   }
 
-  private bool CategoryExists(int id)
-  {
-    return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
-  }
+  private bool CategoryExists(int id) => (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
 }

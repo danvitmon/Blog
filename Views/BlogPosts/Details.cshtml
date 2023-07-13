@@ -5,13 +5,13 @@
 
 @model BlogPost
 
-@inject IImageService         _ImageService
-@inject IBlogService          _BlogPostService
-@inject UserManager<BlogUser> _UserManager
+@inject IImageService         ImageService
+@inject IBlogService          BlogPostService
+@inject UserManager<BlogUser> UserManager
 
 @{
   ViewData["Title"] = "Details";
-  var isLiked = await _BlogPostService.UserLikedBlogAsync(Model.Id, _UserManager.GetUserId(User)!);
+  var isLiked = await BlogPostService.UserLikedBlogAsync(Model.Id, UserManager.GetUserId(User)!);
 }
 <style>
   .ck-editor__editable_inline { min-height: 300px; }
@@ -30,7 +30,7 @@
                                 <div class="content-block">
                                     <!-- Start Post Content  -->
                                     <div class="post-content">
-                                        @foreach (Category category in (await _BlogPostService.GetCategoriesAsync()).Take(1))
+                                        @foreach (Category category in (await BlogPostService.GetCategoriesAsync()).Take(1))
                                         {
                                             <div class="post-cat">
                                                 <div class="post-cat-list">
@@ -80,7 +80,7 @@
                     </p>
                     <figure class="wp-block-image alignwide text-center">
                         <img class="img-fluid rounded-3 m-2" style="max-height: 400px;"
-                             src="@_ImageService.ConvertByteArrayToFile(Model.ImageData,Model.ImageType,(int)DefaultImage.BlogPostImage)" id="blogImage">
+                             src="@ImageService.ConvertByteArrayToFile(Model.ImageData,Model.ImageType,(int)DefaultImage.BlogPostImage)" id="blogImage">
                     </figure>
 
   @Html.Raw(Model.Content)
@@ -103,51 +103,51 @@
           <i id="faThumb" class="fal fa-thumbs-up"></i>
         }
 
-                                <span id="numLikes">@Model.Likes.Where(l=>l.IsLiked==true).Count() Likes</span>
-                            </a>
-                        </div>
-                        <ul class="social-icon icon-rounded-transparent md-size">
-                            <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                            <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
-                            <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-                        </ul>
-                    </div>
-                    <!-- Start Author  -->
-                    <div class="about-author">
-                        <div class="media">
-                            <div class="thumbnail">
-                                <a href="#">
-                                    <img src="~/img/dmface_576.jpg" alt="Author Images" style="height:120px;width:100px">
-                                </a>
-                            </div>
-                            <div class="media-body">
-                                <div class="author-info">
-                                    <h5 class="title">
-                                        <a class="hover-flip-item-wrapper" asp-action="Index" asp-controller="Home">
-                                            <span class="hover-flip-item">
-                                                <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
-                                            </span>
-                                        </a>
-                                    </h5>
-                                    <span class="b3 subtitle">Software Developer</span>
-                                </div>
-                                <div class="content">
-                                    <p class="b1 description">
-                                        I'm Daniel Monastirsky, a 23 year old coder doing my best to adapt to the new software languages we are presented with.
-                                        Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
-                                    </p>
-                                    <ul class="social-share-transparent size-md">
-                                        <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                        <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
-                                        <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Author  -->
-                    <!-- Start Comment Form Area  -->
-                    <div class="axil-comment-area">
+        <span id="numLikes">@Model.Likes.Where(l=>l.IsLiked==true).Count() Likes</span>
+      </a>
+          </div>
+          <ul class="social-icon icon-rounded-transparent md-size">
+              <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+              <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
+              <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+          </ul>
+      </div>
+      <!-- Start Author  -->
+      <div class="about-author">
+          <div class="media">
+              <div class="thumbnail">
+                  <a href="#">
+                      <img src="~/img/dmface_576.jpg" alt="Author Images" style="height:120px;width:100px">
+                  </a>
+              </div>
+              <div class="media-body">
+                  <div class="author-info">
+                      <h5 class="title">
+                          <a class="hover-flip-item-wrapper" asp-action="Index" asp-controller="Home">
+                              <span class="hover-flip-item">
+                                  <span data-text="Daniel Monastirsky">Daniel Monastirsky</span>
+                              </span>
+                          </a>
+                      </h5>
+                      <span class="b3 subtitle">Software Developer</span>
+                  </div>
+                  <div class="content">
+                      <p class="b1 description">
+                          I'm Daniel Monastirsky, a 23 year old coder doing my best to adapt to the new software languages we are presented with.
+                          Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
+                      </p>
+                      <ul class="social-share-transparent size-md">
+                          <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                          <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
+                          <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!-- End Author  -->
+      <!-- Start Comment Form Area  -->
+      <div class="axil-comment-area">
 
     <!-- Start Comment Respond  -->
     @if (User.Identity!.IsAuthenticated)
@@ -196,7 +196,7 @@
             <div class="comment-body">
               <div class="single-comment">
                 <div class="comment-img">
-                  <img src="@_ImageService.ConvertByteArrayToFile(comment.Author?.ImageData, comment.Author?.ImageType, (int)DefaultImage.BlogUserImage)" alt="Author Images" style="height: 40px; width: 40px">
+                  <img src="@ImageService.ConvertByteArrayToFile(comment.Author?.ImageData, comment.Author?.ImageType, (int)DefaultImage.BlogUserImage)" alt="Author Images" style="height: 40px; width: 40px">
                 </div>
                 <div class="comment-inner">
                   <h6 class="commenter">
@@ -251,11 +251,11 @@
     </script>
 
   <script type="text/javascript">
-        @{
-          var userId = _UserManager.GetUserId(User)!;
-        }
+  @{
+    var userId = UserManager.GetUserId(User)!;
+  }
 
-            let userId = '@userId';
+        let userId = '@userId';
 
         $().ready(function () {
             $('#likesButton').click(function () {

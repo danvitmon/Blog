@@ -51,15 +51,14 @@ public class LoginModel : PageModel
   public async Task OnGetAsync(string returnUrl = null)
   {
     if (!string.IsNullOrEmpty(ErrorMessage)) 
-     ModelState.AddModelError(string.Empty, ErrorMessage);
+      ModelState.AddModelError(string.Empty, ErrorMessage);
 
     returnUrl ??= Url.Content("~/");
 
     await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
     ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-    ReturnUrl = returnUrl;
+    ReturnUrl      = returnUrl;
   }
 
   public async Task<IActionResult> OnPostAsync(string returnUrl = null)

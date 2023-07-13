@@ -34,14 +34,12 @@ public class ResendEmailConfirmationModel : PageModel
   [BindProperty]
   public InputModel Input { get; set; }
 
-  public void OnGet()
-  {
-  }
+  public void OnGet() { }
 
   public async Task<IActionResult> OnPostAsync()
   {
     if (!ModelState.IsValid) 
-     return Page();
+      return Page();
 
     var user = await _userManager.FindByEmailAsync(Input.Email);
     if (user == null)
@@ -54,7 +52,7 @@ public class ResendEmailConfirmationModel : PageModel
     var userId      = await _userManager.GetUserIdAsync(user);
     var code        = await _userManager.GenerateEmailConfirmationTokenAsync(user);
     code            = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-    var callbackUrl = Url.Page(      "/Account/ConfirmEmail",      null,      new { userId, code },      Request.Scheme);
+    var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId, code }, Request.Scheme);
 
     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 

@@ -10,13 +10,13 @@ using Blog.Models;
 
 namespace Blog.Areas.Identity.Pages.Account;
 
-public class LoginWith2faModel : PageModel
+public class LoginWith2FaModel : PageModel
 {
-  private readonly ILogger<LoginWith2faModel> _logger;
+  private readonly ILogger<LoginWith2FaModel> _logger;
   private readonly SignInManager<BlogUser>    _signInManager;
   private readonly UserManager<BlogUser>      _userManager;
 
-  public LoginWith2faModel(SignInManager<BlogUser> signInManager, UserManager<BlogUser> userManager, ILogger<LoginWith2faModel> logger)
+  public LoginWith2FaModel(SignInManager<BlogUser> signInManager, UserManager<BlogUser> userManager, ILogger<LoginWith2FaModel> logger)
   {
     _signInManager = signInManager;
     _userManager   = userManager;
@@ -48,7 +48,7 @@ public class LoginWith2faModel : PageModel
     var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
     if (user == null) 
-     throw new InvalidOperationException("Unable to load two-factor authentication user.");
+      throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
     ReturnUrl  = returnUrl;
     RememberMe = rememberMe;
@@ -59,17 +59,17 @@ public class LoginWith2faModel : PageModel
   public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null)
   {
     if (!ModelState.IsValid) 
-     return Page();
+      return Page();
 
-    returnUrl = returnUrl ?? Url.Content("~/");
+    returnUrl ??= Url.Content("~/");
 
     var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
     if (user == null) 
-     throw new InvalidOperationException("Unable to load two-factor authentication user.");
+      throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
     var authenticatorCode = Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
     var result            = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, Input.RememberMachine);
-    var userId            = await _userManager.GetUserIdAsync(user);
+    var userId            = await _userManager.GetUserIdAsync(user); // Keep it here for debugging purposes
 
     if (result.Succeeded)
     {

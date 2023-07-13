@@ -65,73 +65,37 @@ public static class ManageNavPages
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string IndexNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, Index);
-  }
+  public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string EmailNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, Email);
-  }
+  public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string ChangePasswordNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, ChangePassword);
-  }
+  public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string DownloadPersonalDataNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, DownloadPersonalData);
-  }
+  public static string ExternalLoginsNavClass(ViewContext viewContext) => PageNavClass(viewContext, ExternalLogins);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string DeletePersonalDataNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, DeletePersonalData);
-  }
+  public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
   ///   directly from your code. This API may change or be removed in future releases.
   /// </summary>
-  public static string ExternalLoginsNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, ExternalLogins);
-  }
-
-  /// <summary>
-  ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-  ///   directly from your code. This API may change or be removed in future releases.
-  /// </summary>
-  public static string PersonalDataNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, PersonalData);
-  }
-
-  /// <summary>
-  ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-  ///   directly from your code. This API may change or be removed in future releases.
-  /// </summary>
-  public static string TwoFactorAuthenticationNavClass(ViewContext viewContext)
-  {
-    return PageNavClass(viewContext, TwoFactorAuthentication);
-  }
+  public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
   /// <summary>
   ///   This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

@@ -2,7 +2,7 @@
   if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
     Layout = parentLayout.ToString();
   else
-    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
 }
 
 <h1 class="p-4">Manage your account</h1>
@@ -22,5 +22,5 @@
 
 @section Scripts 
 {
-  @RenderSection("Scripts", false)
+  @await RenderSectionAsync("Scripts", false)
 }

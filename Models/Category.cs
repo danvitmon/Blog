@@ -22,9 +22,6 @@ public class Category
               public string?    ImageType { get; set; }
   [NotMapped] public IFormFile? ImageFile { get; set; }
 
-  // Navigation Properties
-  public virtual Category? CCategory { get; set; }
-
   // Navigation Collections
   public virtual ICollection<BlogPost> BlogPosts { get; set; } = new HashSet<BlogPost>();
 }

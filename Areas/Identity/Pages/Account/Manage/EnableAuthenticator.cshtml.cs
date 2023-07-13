@@ -65,7 +65,7 @@ public class EnableAuthenticatorModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await LoadSharedKeyAndQrCodeUriAsync(user);
 
@@ -76,7 +76,7 @@ public class EnableAuthenticatorModel : PageModel
   {
     var user = await _userManager.GetUserAsync(User);
     if (user == null) 
-     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+      return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {
@@ -88,9 +88,9 @@ public class EnableAuthenticatorModel : PageModel
     // Strip spaces and hyphens
     var verificationCode = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
 
-    var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+    var is2FaTokenValid = await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
 
-    if (!is2faTokenValid)
+    if (!is2FaTokenValid)
     {
       ModelState.AddModelError("Input.Code", "Verification code is invalid.");
       await LoadSharedKeyAndQrCodeUriAsync(user);

@@ -31,7 +31,6 @@ public class ImageService : IImageService
     await file!.CopyToAsync(memoryStream);
 
     var byteFile = memoryStream.ToArray();
-    memoryStream.Close();
 
     return byteFile;
   }

@@ -16,21 +16,14 @@ namespace Blog.Controllers;
 public class BlogPostsController : Controller
 {
   private readonly IBlogService          _blogService;
-  private readonly IConfiguration        _configuration;
   private readonly ApplicationDbContext  _context;
-  private readonly IEmailSender          _emailService;
   private readonly IImageService         _imageService;
-  private readonly UserManager<BlogUser> _userManager;
 
-  public BlogPostsController(ApplicationDbContext context, IImageService imageService, IBlogService blogService, IConfiguration configuration, UserManager<BlogUser> userManager, IEmailSender emailSender)
+  public BlogPostsController(ApplicationDbContext context, IImageService imageService, IBlogService blogService)
   {
     _context       = context;
     _imageService  = imageService;
     _blogService   = blogService;
-    _userManager   = userManager;
-    _userManager   = userManager;
-    _emailService  = emailSender;
-    _configuration = configuration;
   }
 
   // GET: BlogPosts
@@ -40,7 +33,6 @@ public class BlogPostsController : Controller
 
     return View(await applicationDbContext.ToListAsync());
   }
-
 
   public async Task<IActionResult> Favorites()
   {
@@ -54,7 +46,7 @@ public class BlogPostsController : Controller
   public async Task<IActionResult> Details(string? slug)
   {
     if (string.IsNullOrEmpty(slug)) 
-     return NotFound();
+      return NotFound();
 
     var blogPost = await _context.BlogPosts.Include(b => b.Category)
                                            .Include(b => b.Comments)
@@ -64,7 +56,7 @@ public class BlogPostsController : Controller
                                            .FirstOrDefaultAsync(m => m.Slug == slug);
 
     if (blogPost == null) 
-     return NotFound();
+      return NotFound();
 
     return View(blogPost);
   }
@@ -98,7 +90,6 @@ public class BlogPostsController : Controller
 
       blogPost.Slug = StringHelper.BlogPostSlug(blogPost.Title);
 
-
       if (blogPost.ImageFile != null)
       {
         blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
@@ -125,12 +116,12 @@ public class BlogPostsController : Controller
   // GET: BlogPosts/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.BlogPosts == null) 
-     return NotFound();
+    if (id == null || !_context.BlogPosts.Any()) 
+      return NotFound();
 
     var blogPost = await _context.BlogPosts.FindAsync(id);
     if (blogPost == null) 
-     return NotFound();
+      return NotFound();
 
     var tagNames = blogPost.Tags.Select(t => t.Name!).ToList();
 
@@ -145,7 +136,7 @@ public class BlogPostsController : Controller
   public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,CreatedDate,UpdatedDate,Slug,IsDeleted,IsPublished,CategoryId,ImageData,ImageType")] BlogPost blogPost, string? stringTags)
   {
     if (id != blogPost.Id) 
-     return NotFound();
+      return NotFound();
 
     ModelState.Remove("Slug");
 
@@ -178,14 +169,14 @@ public class BlogPostsController : Controller
 
         await _blogService.RemoveAllBlogPostTagsAsync(blogPost.Id);
         if (!string.IsNullOrEmpty(stringTags)) 
-         await _blogService.AddTagsToBlogPostAsync(stringTags, blogPost.Id);
+          await _blogService.AddTagsToBlogPostAsync(stringTags, blogPost.Id);
 
         return RedirectToAction(nameof(Details), new { slug = blogPost.Slug });
       }
       catch (DbUpdateConcurrencyException)
       {
         if (!BlogPostExists(blogPost.Id))
-         return NotFound();
+          return NotFound();
 
         throw;
       }
@@ -198,13 +189,13 @@ public class BlogPostsController : Controller
   // GET: BlogPosts/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.BlogPosts == null) 
-     return NotFound();
+    if (id == null || !_context.BlogPosts.Any()) 
+      return NotFound();
 
     var blogPost = await _context.BlogPosts.Include(b => b.Category).FirstOrDefaultAsync(m => m.Id == id);
 
     if (blogPost == null) 
-     return NotFound();
+      return NotFound();
 
     return View(blogPost);
   }
@@ -215,28 +206,26 @@ public class BlogPostsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.BlogPosts == null) 
-     return Problem("Entity set 'ApplicationDbContext.BlogPosts'  is null.");
+    if (!_context.BlogPosts.Any()) 
+     return Problem("Entity set 'ApplicationDbContext.BlogPosts' is empty.");
 
     var blogPost = await _context.BlogPosts.FindAsync(id);
 
-    if (blogPost != null) _context.BlogPosts.Remove(blogPost);
+    if (blogPost != null) 
+      _context.BlogPosts.Remove(blogPost);
 
     await _context.SaveChangesAsync();
 
     return RedirectToAction(nameof(Index));
   }
 
-  private bool BlogPostExists(int id)
-  {
-    return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
-  }
+  private bool BlogPostExists(int id) => (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
 
   public async Task<IActionResult> LikeBlogPost(int blogPostId, string blogUserId)
   {
-    var blogUser       = await _context.Users.Include(u => u.BlogLikes).FirstOrDefaultAsync(u => u.Id == blogUserId);
-    var result         = false;
-    BlogLike? blogLike = new();
+    var       blogUser = await _context.Users.Include(u => u.BlogLikes).FirstOrDefaultAsync(u => u.Id == blogUserId);
+    var       result   = false;
+    BlogLike? blogLike;
 
     if (blogUser != null)
     {
@@ -264,9 +253,8 @@ public class BlogPostsController : Controller
     return Json(new
     {
       isLiked = result,
-      count   = _context.BlogLikes.Where(bl => bl.BlogPostId == blogPostId && bl.IsLiked == true).Count()
+      count   = _context.BlogLikes.Count(bl => bl.BlogPostId == blogPostId && bl.IsLiked)
     });
-    ;
   }
 
   [HttpGet]

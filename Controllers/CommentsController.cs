@@ -32,12 +32,12 @@ public class CommentsController : Controller
   // GET: Comments/Details/5
   public async Task<IActionResult> Details(int? id)
   {
-    if (id == null || _context.Comments == null) 
-     return NotFound();
+    if (id == null || !_context.Comments.Any()) 
+      return NotFound();
 
     var comment = await _context.Comments.Include(c => c.Author).Include(c => c.BlogPost).FirstOrDefaultAsync(m => m.Id == id);
     if (comment == null) 
-     return NotFound();
+      return NotFound();
 
     return View(comment);
   }
@@ -45,7 +45,7 @@ public class CommentsController : Controller
   // GET: Comments/Create
   public IActionResult Create()
   {
-    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id");
+    ViewData["AuthorId"]   = new SelectList(_context.Users,     "Id", "Id");
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content");
      
     return View();
@@ -73,7 +73,7 @@ public class CommentsController : Controller
       return RedirectToAction("Details", "BlogPosts", new { slug = blogPost!.Slug });
     }
 
-    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    ViewData["AuthorId"]   = new SelectList(_context.Users,     "Id", "Id",      comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
 
     return View(comment);
@@ -82,14 +82,14 @@ public class CommentsController : Controller
   // GET: Comments/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.Comments == null)
-     return NotFound();
+    if (id == null || !_context.Comments.Any())
+      return NotFound();
 
     var comment = await _context.Comments.FindAsync(id);
     if (comment == null) 
-     return NotFound();
+      return NotFound();
 
-    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    ViewData["AuthorId"]   = new SelectList(_context.Users,     "Id", "Id",      comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
 
     return View(comment);
@@ -103,7 +103,7 @@ public class CommentsController : Controller
   public async Task<IActionResult> Edit(int id, [Bind("Id,Body,Created,Updated,UpdateReason,BlogPostId,AuthorId")] Comment comment)
   {
     if (id != comment.Id) 
-     return NotFound();
+      return NotFound();
 
     if (ModelState.IsValid)
     {
@@ -115,7 +115,7 @@ public class CommentsController : Controller
       catch (DbUpdateConcurrencyException)
       {
         if (!CommentExists(comment.Id))
-         return NotFound();
+          return NotFound();
 
         throw;
       }
@@ -123,7 +123,7 @@ public class CommentsController : Controller
       return RedirectToAction(nameof(Index));
     }
 
-    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    ViewData["AuthorId"]   = new SelectList(_context.Users,     "Id", "Id",      comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
 
     return View(comment);
@@ -132,12 +132,12 @@ public class CommentsController : Controller
   // GET: Comments/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.Comments == null) 
-     return NotFound();
+    if (id == null || !_context.Comments.Any()) 
+      return NotFound();
 
     var comment = await _context.Comments.Include(c => c.Author).Include(c => c.BlogPost).FirstOrDefaultAsync(m => m.Id == id);
     if (comment == null) 
-     return NotFound();
+      return NotFound();
 
     return View(comment);
   }
@@ -148,19 +148,17 @@ public class CommentsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.Comments == null) 
-     return Problem("Entity set 'ApplicationDbContext.Comments'  is null.");
+    if (!_context.Comments.Any()) 
+      return Problem("Entity set 'ApplicationDbContext.Comments' is empty.");
 
     var comment = await _context.Comments.FindAsync(id);
-    if (comment != null) _context.Comments.Remove(comment);
+    if (comment != null) 
+      _context.Comments.Remove(comment);
 
     await _context.SaveChangesAsync();
 
     return RedirectToAction(nameof(Index));
   }
 
-  private bool CommentExists(int id)
-  {
-    return (_context.Comments?.Any(e => e.Id == id)).GetValueOrDefault();
-  }
+  private bool CommentExists(int id) => (_context.Comments?.Any(e => e.Id == id)).GetValueOrDefault();
 }
