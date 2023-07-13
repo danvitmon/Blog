@@ -1,22 +1,23 @@
-﻿using Blog.Data;
-using Blog.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+
+using Blog.Data;
+using Blog.Models;
 
 namespace Blog.Controllers;
 
 [Authorize]
 public class CommentsController : Controller
 {
-  private readonly ApplicationDbContext _context;
+  private readonly ApplicationDbContext  _context;
   private readonly UserManager<BlogUser> _userManager;
 
   public CommentsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
   {
-    _context = context;
+    _context     = context;
     _userManager = userManager;
   }
 
@@ -24,19 +25,19 @@ public class CommentsController : Controller
   public async Task<IActionResult> Index()
   {
     var applicationDbContext = _context.Comments.Include(c => c.Author).Include(c => c.BlogPost);
+
     return View(await applicationDbContext.ToListAsync());
   }
 
   // GET: Comments/Details/5
   public async Task<IActionResult> Details(int? id)
   {
-    if (id == null || _context.Comments == null) return NotFound();
+    if (id == null || _context.Comments == null) 
+     return NotFound();
 
-    var comment = await _context.Comments
-      .Include(c => c.Author)
-      .Include(c => c.BlogPost)
-      .FirstOrDefaultAsync(m => m.Id == id);
-    if (comment == null) return NotFound();
+    var comment = await _context.Comments.Include(c => c.Author).Include(c => c.BlogPost).FirstOrDefaultAsync(m => m.Id == id);
+    if (comment == null) 
+     return NotFound();
 
     return View(comment);
   }
@@ -44,8 +45,9 @@ public class CommentsController : Controller
   // GET: Comments/Create
   public IActionResult Create()
   {
-    ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id");
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content");
+     
     return View();
   }
 
@@ -60,7 +62,7 @@ public class CommentsController : Controller
 
     if (ModelState.IsValid)
     {
-      comment.Created = DateTime.UtcNow;
+      comment.Created  = DateTime.UtcNow;
       comment.AuthorId = _userManager.GetUserId(User);
 
       var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == comment.BlogPostId);
@@ -68,23 +70,28 @@ public class CommentsController : Controller
       _context.Add(comment);
       await _context.SaveChangesAsync();
 
-      return RedirectToAction("Details", "BlogPosts", new { slug = blogPost.Slug });
+      return RedirectToAction("Details", "BlogPosts", new { slug = blogPost!.Slug });
     }
 
-    ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
+
     return View(comment);
   }
 
   // GET: Comments/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.Comments == null) return NotFound();
+    if (id == null || _context.Comments == null)
+     return NotFound();
 
     var comment = await _context.Comments.FindAsync(id);
-    if (comment == null) return NotFound();
-    ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    if (comment == null) 
+     return NotFound();
+
+    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
+
     return View(comment);
   }
 
@@ -93,10 +100,10 @@ public class CommentsController : Controller
   // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> Edit(int id,
-    [Bind("Id,Body,Created,Updated,UpdateReason,BlogPostId,AuthorId")] Comment comment)
+  public async Task<IActionResult> Edit(int id, [Bind("Id,Body,Created,Updated,UpdateReason,BlogPostId,AuthorId")] Comment comment)
   {
-    if (id != comment.Id) return NotFound();
+    if (id != comment.Id) 
+     return NotFound();
 
     if (ModelState.IsValid)
     {
@@ -108,28 +115,29 @@ public class CommentsController : Controller
       catch (DbUpdateConcurrencyException)
       {
         if (!CommentExists(comment.Id))
-          return NotFound();
+         return NotFound();
+
         throw;
       }
 
       return RedirectToAction(nameof(Index));
     }
 
-    ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
+    ViewData["AuthorId"]   = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
     ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Content", comment.BlogPostId);
+
     return View(comment);
   }
 
   // GET: Comments/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.Comments == null) return NotFound();
+    if (id == null || _context.Comments == null) 
+     return NotFound();
 
-    var comment = await _context.Comments
-      .Include(c => c.Author)
-      .Include(c => c.BlogPost)
-      .FirstOrDefaultAsync(m => m.Id == id);
-    if (comment == null) return NotFound();
+    var comment = await _context.Comments.Include(c => c.Author).Include(c => c.BlogPost).FirstOrDefaultAsync(m => m.Id == id);
+    if (comment == null) 
+     return NotFound();
 
     return View(comment);
   }
@@ -140,11 +148,14 @@ public class CommentsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.Comments == null) return Problem("Entity set 'ApplicationDbContext.Comments'  is null.");
+    if (_context.Comments == null) 
+     return Problem("Entity set 'ApplicationDbContext.Comments'  is null.");
+
     var comment = await _context.Comments.FindAsync(id);
     if (comment != null) _context.Comments.Remove(comment);
 
     await _context.SaveChangesAsync();
+
     return RedirectToAction(nameof(Index));
   }
 

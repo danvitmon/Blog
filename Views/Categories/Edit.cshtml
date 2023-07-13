@@ -1,10 +1,12 @@
-﻿@using Blog.Enums;
+﻿@using Microsoft.AspNetCore.Identity;
+
+@using Blog.Enums;
 @using Blog.Services.Interfaces;
-@using Microsoft.AspNetCore.Identity;
+
 @model Blog.Models.Category
 
 @inject UserManager<BlogUser> _UserManager
-@inject IImageService _ImageService
+@inject IImageService         _ImageService
 
 @{
   var blogUser = User.Identity!.IsAuthenticated ? await _UserManager.GetUserAsync(User) : new BlogUser();
@@ -53,6 +55,7 @@
   <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
+@section Scripts 
+{
   @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

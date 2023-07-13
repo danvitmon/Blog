@@ -1,12 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#nullable disable
+﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using Blog.Models;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -14,30 +11,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
+using Blog.Models;
+
 namespace Blog.Areas.Identity.Pages.Account;
 
 public class RegisterModel : PageModel
 {
-  private readonly IEmailSender _emailSender;
+  private readonly IEmailSender              _emailSender;
   private readonly IUserEmailStore<BlogUser> _emailStore;
-  private readonly ILogger<RegisterModel> _logger;
-  private readonly SignInManager<BlogUser> _signInManager;
-  private readonly UserManager<BlogUser> _userManager;
-  private readonly IUserStore<BlogUser> _userStore;
+  private readonly ILogger<RegisterModel>    _logger;
+  private readonly SignInManager<BlogUser>   _signInManager;
+  private readonly UserManager<BlogUser>     _userManager;
+  private readonly IUserStore<BlogUser>      _userStore;
 
-  public RegisterModel(
-    UserManager<BlogUser> userManager,
-    IUserStore<BlogUser> userStore,
-    SignInManager<BlogUser> signInManager,
-    ILogger<RegisterModel> logger,
-    IEmailSender emailSender)
+  public RegisterModel(UserManager<BlogUser> userManager, IUserStore<BlogUser> userStore, SignInManager<BlogUser> signInManager, ILogger<RegisterModel> logger, IEmailSender emailSender)
   {
-    _userManager = userManager;
-    _userStore = userStore;
-    _emailStore = GetEmailStore();
+    _userManager   = userManager;
+    _userStore     = userStore;
+    _emailStore    = GetEmailStore();
     _signInManager = signInManager;
-    _logger = logger;
-    _emailSender = emailSender;
+    _logger        = logger;
+    _emailSender   = emailSender;
   }
 
   /// <summary>
@@ -69,30 +63,28 @@ public class RegisterModel : PageModel
   public async Task<IActionResult> OnPostAsync(string returnUrl = null)
   {
     returnUrl ??= Url.Content("~/");
+
     ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
     if (ModelState.IsValid)
     {
       var user = CreateUser();
 
       await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-      await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+      await _emailStore.SetEmailAsync  (user, Input.Email, CancellationToken.None);
+
       var result = await _userManager.CreateAsync(user, Input.Password);
 
       if (result.Succeeded)
       {
         _logger.LogInformation("User created a new account with password.");
 
-        var userId = await _userManager.GetUserIdAsync(user);
-        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = Url.Page(
-          "/Account/ConfirmEmail",
-          null,
-          new { area = "Identity", userId, code, returnUrl },
-          Request.Scheme);
+        var userId      = await _userManager.GetUserIdAsync(user);
+        var code        = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        code            = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { area = "Identity", userId, code, returnUrl }, Request.Scheme);
 
-        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-          $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
         if (_userManager.Options.SignIn.RequireConfirmedAccount)
         {
@@ -100,13 +92,14 @@ public class RegisterModel : PageModel
         }
 
         await _signInManager.SignInAsync(user, false);
+
         return LocalRedirect(returnUrl);
       }
 
-      foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
+      foreach (var error in result.Errors) 
+       ModelState.AddModelError(string.Empty, error.Description);
     }
 
-    // If we got this far, something failed, redisplay form
     return Page();
   }
 
@@ -117,7 +110,7 @@ public class RegisterModel : PageModel
       var blogUser = Activator.CreateInstance<BlogUser>();
 
       blogUser.FirstName = Input.FirstName;
-      blogUser.LastName = Input.LastName;
+      blogUser.LastName  = Input.LastName;
 
       return blogUser;
     }
@@ -133,6 +126,7 @@ public class RegisterModel : PageModel
   {
     if (!_userManager.SupportsUserEmail)
       throw new NotSupportedException("The default UI requires a user store with email support.");
+
     return (IUserEmailStore<BlogUser>)_userStore;
   }
 

@@ -2,9 +2,9 @@
 
 public class BlogLike
 {
-  public int Id { get; set; }
-  public int BlogPostId { get; set; }
-  public bool IsLiked { get; set; }
+  public int     Id         { get; set; }
+  public int     BlogPostId { get; set; }
+  public bool    IsLiked    { get; set; }
   public string? BlogUserId { get; set; }
 
   public virtual BlogPost? BlogPost { get; set; }

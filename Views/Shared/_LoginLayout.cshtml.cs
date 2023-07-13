@@ -4,7 +4,5 @@ namespace Blog.Views.Shared;
 
 public class _LoginLayoutModel : PageModel
 {
-  public void OnGet()
-  {
-  }
+  public void OnGet() {}
 }

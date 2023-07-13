@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Models;
@@ -21,15 +22,12 @@ public class BlogUser : IdentityUser
   public string FullName => $"{FirstName} {LastName}";
 
   // Image Properties
-  public byte[]? ImageData { get; set; }
-
-  public string? ImageType { get; set; }
-
+              public byte[]?    ImageData { get; set; }
+              public string?    ImageType { get; set; }
   [NotMapped] public IFormFile? ImageFile { get; set; }
 
 
   // Navigation Properties
-  public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
-
+  public virtual ICollection<Comment>  Comments  { get; set; } = new HashSet<Comment>();
   public virtual ICollection<BlogLike> BlogLikes { get; set; } = new HashSet<BlogLike>();
 }

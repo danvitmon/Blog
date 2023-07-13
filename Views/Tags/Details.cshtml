@@ -1,10 +1,12 @@
-﻿@using Blog.Services.Interfaces
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
+
+@using Blog.Services.Interfaces
 @using Blog.Enums
+
 @model IEnumerable<BlogPost>
 
-@inject IImageService _ImageService
-@inject IBlogService _BlogService
+@inject IImageService         _ImageService
+@inject IBlogService          _BlogService
 @inject UserManager<BlogUser> _userManager
 
 @{

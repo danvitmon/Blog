@@ -1,56 +1,54 @@
-﻿using Blog.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+using X.PagedList;
+
+using Blog.Data;
 using Blog.Models;
 using Blog.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using X.PagedList;
 
 namespace Blog.Controllers;
 
 public class TagsController : Controller
 {
-  private readonly IBlogService _blogService;
+  private readonly IBlogService         _blogService;
   private readonly ApplicationDbContext _context;
 
   public TagsController(ApplicationDbContext context, IBlogService blogService)
   {
-    _context = context;
+    _context     = context;
     _blogService = blogService;
   }
 
   // GET: Tags
   public async Task<IActionResult> Index()
   {
-    return _context.Tags != null
-      ? View(await _context.Tags.ToListAsync())
-      : Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
+    return _context.Tags != null ? View(await _context.Tags.ToListAsync()) : Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
   }
 
   // GET: Tags/Details/5
   public async Task<IActionResult> Details(int? tagId, int? pageNum)
   {
-    if (tagId == null || _context.Tags == null) return NotFound();
+    if (tagId == null || _context.Tags == null) 
+     return NotFound();
 
     var tag = await _context.Tags.Include(t => t.BlogPosts).FirstOrDefaultAsync(t => t.Id == tagId);
 
-    if (tag == null) return NotFound();
+    if (tag == null) 
+     return NotFound();
 
-    var pageSize = 5;
-    var page = pageNum ?? 1;
-
+    var pageSize  = 5;
+    var page      = pageNum ?? 1;
     var blogPosts = await tag.BlogPosts.ToPagedListAsync(page, pageSize);
 
     ViewData["ActionName"] = "Details";
-    ViewData["Tags"] = await _blogService.GetTagsAsync();
+    ViewData["Tags"]       = await _blogService.GetTagsAsync();
 
     return View(blogPosts);
   }
 
   // GET: Tags/Create
-  public IActionResult Create()
-  {
-    return View();
-  }
+  public IActionResult Create() => View();
 
   // POST: Tags/Create
   // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -63,6 +61,7 @@ public class TagsController : Controller
     {
       _context.Add(tag);
       await _context.SaveChangesAsync();
+
       return RedirectToAction(nameof(Index));
     }
 
@@ -72,10 +71,14 @@ public class TagsController : Controller
   // GET: Tags/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.Tags == null) return NotFound();
+    if (id == null || _context.Tags == null) 
+     return NotFound();
 
     var tag = await _context.Tags.FindAsync(id);
-    if (tag == null) return NotFound();
+
+    if (tag == null) 
+     return NotFound();
+
     return View(tag);
   }
 
@@ -86,7 +89,8 @@ public class TagsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Tag tag)
   {
-    if (id != tag.Id) return NotFound();
+    if (id != tag.Id) 
+     return NotFound();
 
     if (ModelState.IsValid)
     {
@@ -98,7 +102,8 @@ public class TagsController : Controller
       catch (DbUpdateConcurrencyException)
       {
         if (!TagExists(tag.Id))
-          return NotFound();
+         return NotFound();
+
         throw;
       }
 
@@ -111,11 +116,13 @@ public class TagsController : Controller
   // GET: Tags/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.Tags == null) return NotFound();
+    if (id == null || _context.Tags == null) 
+     return NotFound();
 
-    var tag = await _context.Tags
-      .FirstOrDefaultAsync(m => m.Id == id);
-    if (tag == null) return NotFound();
+    var tag = await _context.Tags.FirstOrDefaultAsync(m => m.Id == id);
+
+    if (tag == null) 
+     return NotFound();
 
     return View(tag);
   }
@@ -126,11 +133,14 @@ public class TagsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.Tags == null) return Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
+    if (_context.Tags == null) 
+     return Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
+
     var tag = await _context.Tags.FindAsync(id);
     if (tag != null) _context.Tags.Remove(tag);
 
     await _context.SaveChangesAsync();
+
     return RedirectToAction(nameof(Index));
   }
 

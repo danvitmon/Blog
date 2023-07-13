@@ -1,34 +1,31 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#nullable disable
+﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
-using Blog.Models;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+using Blog.Models;
 
 namespace Blog.Areas.Identity.Pages.Account.Manage;
 
 public class EnableAuthenticatorModel : PageModel
 {
   private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
-  private readonly ILogger<EnableAuthenticatorModel> _logger;
-  private readonly UrlEncoder _urlEncoder;
-  private readonly UserManager<BlogUser> _userManager;
 
-  public EnableAuthenticatorModel(
-    UserManager<BlogUser> userManager,
-    ILogger<EnableAuthenticatorModel> logger,
-    UrlEncoder urlEncoder)
+  private readonly ILogger<EnableAuthenticatorModel> _logger;
+  private readonly UrlEncoder                        _urlEncoder;
+  private readonly UserManager<BlogUser>             _userManager;
+
+  public EnableAuthenticatorModel(UserManager<BlogUser> userManager, ILogger<EnableAuthenticatorModel> logger, UrlEncoder urlEncoder)
   {
     _userManager = userManager;
-    _logger = logger;
-    _urlEncoder = urlEncoder;
+    _logger      = logger;
+    _urlEncoder  = urlEncoder;
   }
 
   /// <summary>
@@ -67,7 +64,8 @@ public class EnableAuthenticatorModel : PageModel
   public async Task<IActionResult> OnGetAsync()
   {
     var user = await _userManager.GetUserAsync(User);
-    if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+    if (user == null) 
+     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await LoadSharedKeyAndQrCodeUriAsync(user);
 
@@ -77,29 +75,33 @@ public class EnableAuthenticatorModel : PageModel
   public async Task<IActionResult> OnPostAsync()
   {
     var user = await _userManager.GetUserAsync(User);
-    if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+    if (user == null) 
+     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {
       await LoadSharedKeyAndQrCodeUriAsync(user);
+     
       return Page();
     }
 
     // Strip spaces and hyphens
     var verificationCode = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
 
-    var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
-      user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+    var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
 
     if (!is2faTokenValid)
     {
       ModelState.AddModelError("Input.Code", "Verification code is invalid.");
       await LoadSharedKeyAndQrCodeUriAsync(user);
+
       return Page();
     }
 
     await _userManager.SetTwoFactorEnabledAsync(user, true);
+
     var userId = await _userManager.GetUserIdAsync(user);
+
     _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
 
     StatusMessage = "Your authenticator app has been verified.";
@@ -107,7 +109,8 @@ public class EnableAuthenticatorModel : PageModel
     if (await _userManager.CountRecoveryCodesAsync(user) == 0)
     {
       var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-      RecoveryCodes = recoveryCodes.ToArray();
+      RecoveryCodes     = recoveryCodes.ToArray();
+
       return RedirectToPage("./ShowRecoveryCodes");
     }
 
@@ -126,14 +129,15 @@ public class EnableAuthenticatorModel : PageModel
 
     SharedKey = FormatKey(unformattedKey);
 
-    var email = await _userManager.GetEmailAsync(user);
+    var email        = await _userManager.GetEmailAsync(user);
     AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
   }
 
   private string FormatKey(string unformattedKey)
   {
-    var result = new StringBuilder();
+    var result          = new StringBuilder();
     var currentPosition = 0;
+
     while (currentPosition + 4 < unformattedKey.Length)
     {
       result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');
@@ -147,12 +151,7 @@ public class EnableAuthenticatorModel : PageModel
 
   private string GenerateQrCodeUri(string email, string unformattedKey)
   {
-    return string.Format(
-      CultureInfo.InvariantCulture,
-      AuthenticatorUriFormat,
-      _urlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"),
-      _urlEncoder.Encode(email),
-      unformattedKey);
+    return string.Format(CultureInfo.InvariantCulture, AuthenticatorUriFormat, _urlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"), _urlEncoder.Encode(email), unformattedKey);
   }
 
   /// <summary>

@@ -20,11 +20,6 @@
         <input asp-for="Body" class="form-control"/>
         <span asp-validation-for="Body" class="text-danger"></span>
       </div>
-      @*<div class="form-group">
-                <label asp-for="UpdateReason" class="control-label"></label>
-                <input asp-for="UpdateReason" class="form-control" />
-                <span asp-validation-for="UpdateReason" class="text-danger"></span>
-            </div>*@
       <div class="form-group">
         <label asp-for="BlogPostId" class="control-label"></label>
         <select asp-for="BlogPostId" class="form-control" asp-items="ViewBag.BlogPostId"></select>
@@ -40,6 +35,7 @@
   <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
+@section Scripts 
+{
   @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

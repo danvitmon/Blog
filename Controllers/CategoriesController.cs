@@ -1,45 +1,44 @@
-﻿using Blog.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+using X.PagedList;
+
+using Blog.Data;
 using Blog.Models;
 using Blog.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using X.PagedList;
 
 namespace Blog.Controllers;
 
 public class CategoriesController : Controller
 {
-  private readonly IBlogService _blogService;
+  private readonly IBlogService         _blogService;
   private readonly ApplicationDbContext _context;
 
   public CategoriesController(ApplicationDbContext context, IBlogService blogService)
   {
-    _context = context;
+    _context     = context;
     _blogService = blogService;
   }
 
   // GET: Categories
   public async Task<IActionResult> Index()
   {
-    return _context.Categories != null
-      ? View(await _context.Categories.ToListAsync())
-      : Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+    return _context.Categories != null ? View(await _context.Categories.ToListAsync()) : Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
   }
 
   // GET: Categories/Details/5
   public async Task<IActionResult> Details(int? id, int? pageNum)
   {
-    if (id == null || _context.Categories == null) return NotFound();
+    if (id == null || _context.Categories == null) 
+     return NotFound();
 
-    var category1 = await _context.Categories
-      .Include(c => c.BlogPosts)
-      .FirstOrDefaultAsync(c => c.Id == id);
+    var category1 = await _context.Categories.Include(c => c.BlogPosts).FirstOrDefaultAsync(c => c.Id == id);
 
-    if (category1 == null) return NotFound();
+    if (category1 == null) 
+     return NotFound();
 
-    var pageSize = 5;
-    var page = pageNum ?? 1;
-
+    var pageSize  = 5;
+    var page      = pageNum ?? 1;
     var blogPosts = await category1.BlogPosts.ToPagedListAsync(page, pageSize);
 
     ViewData["ActionName"] = "Details";
@@ -65,6 +64,7 @@ public class CategoriesController : Controller
     {
       _context.Add(category);
       await _context.SaveChangesAsync();
+
       return RedirectToAction(nameof(Index));
     }
 
@@ -74,10 +74,13 @@ public class CategoriesController : Controller
   // GET: Categories/Edit/5
   public async Task<IActionResult> Edit(int? id)
   {
-    if (id == null || _context.Categories == null) return NotFound();
+    if (id == null || _context.Categories == null) 
+     return NotFound();
 
     var category = await _context.Categories.FindAsync(id);
-    if (category == null) return NotFound();
+    if (category == null) 
+     return NotFound();
+
     return View(category);
   }
 
@@ -88,7 +91,8 @@ public class CategoriesController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageData,ImageType")] Category category)
   {
-    if (id != category.Id) return NotFound();
+    if (id != category.Id)  
+     return NotFound();
 
     if (ModelState.IsValid)
     {
@@ -100,7 +104,8 @@ public class CategoriesController : Controller
       catch (DbUpdateConcurrencyException)
       {
         if (!CategoryExists(category.Id))
-          return NotFound();
+         return NotFound();
+
         throw;
       }
 
@@ -113,11 +118,12 @@ public class CategoriesController : Controller
   // GET: Categories/Delete/5
   public async Task<IActionResult> Delete(int? id)
   {
-    if (id == null || _context.Categories == null) return NotFound();
+    if (id == null || _context.Categories == null) 
+     return NotFound();
 
-    var category = await _context.Categories
-      .FirstOrDefaultAsync(m => m.Id == id);
-    if (category == null) return NotFound();
+    var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+    if (category == null) 
+     return NotFound();
 
     return View(category);
   }
@@ -128,11 +134,14 @@ public class CategoriesController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> DeleteConfirmed(int id)
   {
-    if (_context.Categories == null) return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+    if (_context.Categories == null) 
+     return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+
     var category = await _context.Categories.FindAsync(id);
     if (category != null) _context.Categories.Remove(category);
 
     await _context.SaveChangesAsync();
+
     return RedirectToAction(nameof(Index));
   }
 

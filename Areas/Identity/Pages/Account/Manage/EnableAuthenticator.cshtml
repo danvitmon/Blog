@@ -1,7 +1,9 @@
 ﻿@page
+
 @model EnableAuthenticatorModel
+
 @{
-  ViewData["Title"] = "Configure authenticator app";
+  ViewData["Title"]      = "Configure authenticator app";
   ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
@@ -48,6 +50,7 @@
   </ol>
 </div>
 
-@section Scripts {
+@section Scripts 
+{
   <partial name="_ValidationScriptsPartial"/>
 }

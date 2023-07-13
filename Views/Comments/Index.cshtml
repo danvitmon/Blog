@@ -50,15 +50,19 @@
         @Html.DisplayFor(modelItem => item.UpdateReason)
       </td>
       <td>
-        @Html.DisplayFor(modelItem => item.BlogPost.Content)
+        @Html.DisplayFor(modelItem => item.BlogPost!.Content)
       </td>
       <td>
-        @Html.DisplayFor(modelItem => item.Author.Id)
+        @Html.DisplayFor(modelItem => item.Author!.Id)
       </td>
-      <td>
-        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        <td>
+          <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+
+          @if (User.IsInRole("Admin"))
+          {
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete |</a>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+          }
       </td>
     </tr>
   }

@@ -18,10 +18,8 @@ public class Category
   public string? Description { get; set; }
 
   // Image Properties
-  public byte[]? ImageData { get; set; }
-
-  public string? ImageType { get; set; }
-
+              public byte[]?    ImageData { get; set; }
+              public string?    ImageType { get; set; }
   [NotMapped] public IFormFile? ImageFile { get; set; }
 
   // Navigation Properties

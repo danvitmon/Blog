@@ -1,32 +1,28 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#nullable disable
+﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Blog.Models;
-using Blog.Services.Interfaces;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+using Blog.Models;
+using Blog.Services.Interfaces;
 
 namespace Blog.Areas.Identity.Pages.Account.Manage;
 
 public class IndexModel : PageModel
 {
-  private readonly IImageService _imageService;
+  private readonly IImageService           _imageService;
   private readonly SignInManager<BlogUser> _signInManager;
-  private readonly UserManager<BlogUser> _userManager;
+  private readonly UserManager<BlogUser>   _userManager;
 
-  public IndexModel(
-    UserManager<BlogUser> userManager,
-    SignInManager<BlogUser> signInManager,
-    IImageService imageService)
+  public IndexModel(UserManager<BlogUser> userManager, SignInManager<BlogUser> signInManager, IImageService imageService)
   {
-    _userManager = userManager;
+    _userManager   = userManager;
     _signInManager = signInManager;
-    _imageService = imageService;
+    _imageService  = imageService;
   }
 
   /// <summary>
@@ -51,7 +47,7 @@ public class IndexModel : PageModel
 
   private async Task LoadAsync(BlogUser user)
   {
-    var userName = await _userManager.GetUserNameAsync(user);
+    var userName    = await _userManager.GetUserNameAsync(user);
     var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
     Username = userName;
@@ -59,34 +55,38 @@ public class IndexModel : PageModel
     Input = new InputModel
     {
       PhoneNumber = phoneNumber,
-      FirstName = user.FirstName,
-      LastName = user.LastName,
-      ImageData = user.ImageData
+      FirstName   = user.FirstName,
+      LastName    = user.LastName,
+      ImageData   = user.ImageData
     };
   }
 
   public async Task<IActionResult> OnGetAsync()
   {
     var user = await _userManager.GetUserAsync(User);
-    if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+    if (user == null) 
+     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     await LoadAsync(user);
+
     return Page();
   }
 
   public async Task<IActionResult> OnPostAsync()
   {
     var user = await _userManager.GetUserAsync(User);
-    if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+    if (user == null) 
+     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
     if (!ModelState.IsValid)
     {
       await LoadAsync(user);
+
       return Page();
     }
 
     user.FirstName = Input.FirstName;
-    user.LastName = Input.LastName;
+    user.LastName  = Input.LastName;
 
     if (Input.ImageFile != null)
     {
@@ -105,12 +105,14 @@ public class IndexModel : PageModel
       if (!setPhoneResult.Succeeded)
       {
         StatusMessage = "Unexpected error when trying to set phone number.";
+
         return RedirectToPage();
       }
     }
 
     await _signInManager.RefreshSignInAsync(user);
     StatusMessage = "Your profile has been updated";
+
     return RedirectToPage();
   }
 

@@ -17,24 +17,19 @@ public class BlogPost
 
   [Required] public string? Content { get; set; }
 
-  [DataType(DataType.DateTime)] public DateTime CreatedDate { get; set; } = default;
-
+  [DataType(DataType.DateTime)] public DateTime  CreatedDate { get; set; } = default;
   [DataType(DataType.DateTime)] public DateTime? UpdatedDate { get; set; }
 
-  [Required] public string? Slug { get; set; }
-
-  [Display(Name = "Deleted?")] public bool IsDeleted { get; set; }
-
-  [Display(Name = "Published?")] public bool IsPublished { get; set; }
+  [Required]                     public string? Slug        { get; set; }
+  [Display(Name = "Deleted?")]   public bool    IsDeleted   { get; set; }
+  [Display(Name = "Published?")] public bool    IsPublished { get; set; }
 
   // Foreign Key 1-to-1
   public int CategoryId { get; set; }
 
   // Image Properties
-  public byte[]? ImageData { get; set; }
-
-  public string? ImageType { get; set; }
-
+              public byte[]?    ImageData { get; set; }
+              public string?    ImageType { get; set; }
   [NotMapped] public IFormFile? ImageFile { get; set; }
 
   // Navigation Properties
@@ -45,7 +40,6 @@ public class BlogPost
   public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
   // 1-to-Many
-  public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
-
+  public virtual ICollection<Tag>      Tags  { get; set; } = new HashSet<Tag>();
   public virtual ICollection<BlogLike> Likes { get; set; } = new HashSet<BlogLike>();
 }

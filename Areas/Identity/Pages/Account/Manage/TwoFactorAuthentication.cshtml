@@ -1,8 +1,10 @@
 ﻿@page
+
 @using Microsoft.AspNetCore.Http.Features
+
 @model TwoFactorAuthenticationModel
 @{
-  ViewData["Title"] = "Two-factor authentication (2FA)";
+  ViewData["Title"]      = "Two-factor authentication (2FA)";
   ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
@@ -66,6 +68,7 @@
   }
 }
 
-@section Scripts {
+@section Scripts 
+{
   <partial name="_ValidationScriptsPartial"/>
 }

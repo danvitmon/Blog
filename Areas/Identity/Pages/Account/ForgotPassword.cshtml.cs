@@ -1,23 +1,22 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#nullable disable
+﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using Blog.Models;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
+using Blog.Models;
+
 namespace Blog.Areas.Identity.Pages.Account;
 
 public class ForgotPasswordModel : PageModel
 {
-  private readonly IEmailSender _emailSender;
+  private readonly IEmailSender          _emailSender;
   private readonly UserManager<BlogUser> _userManager;
 
   public ForgotPasswordModel(UserManager<BlogUser> userManager, IEmailSender emailSender)
@@ -44,18 +43,11 @@ public class ForgotPasswordModel : PageModel
 
       // For more information on how to enable account confirmation and password reset please
       // visit https://go.microsoft.com/fwlink/?LinkID=532713
-      var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-      code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-      var callbackUrl = Url.Page(
-        "/Account/ResetPassword",
-        null,
-        new { area = "Identity", code },
-        Request.Scheme);
+      var code        = await _userManager.GeneratePasswordResetTokenAsync(user);
+      code            = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+      var callbackUrl = Url.Page("/Account/ResetPassword", null, new { area = "Identity", code }, Request.Scheme);
 
-      await _emailSender.SendEmailAsync(
-        Input.Email,
-        "Reset Password",
-        $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+      await _emailSender.SendEmailAsync(Input.Email, "Reset Password", $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
       return RedirectToPage("./ForgotPasswordConfirmation");
     }

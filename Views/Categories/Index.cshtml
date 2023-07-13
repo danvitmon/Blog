@@ -1,4 +1,12 @@
-﻿@model IEnumerable<Category>
+﻿@using Microsoft.AspNetCore.Identity
+
+@using Blog.Services.Interfaces
+@using Blog.Enums
+
+@inject UserManager<BlogUser> _UserManager
+@inject IImageService         _ImageService
+
+@model IEnumerable<Category>
 
 @{
   ViewData["Title"] = "Index";
@@ -18,13 +26,6 @@
     <th>
       @Html.DisplayNameFor(model => model.Description)
     </th>
-    <th>
-      @Html.DisplayNameFor(model => model.ImageData)
-    </th>
-    <th>
-      @Html.DisplayNameFor(model => model.ImageType)
-    </th>
-    <th></th>
   </tr>
   </thead>
   <tbody>
@@ -38,15 +39,13 @@
         @Html.DisplayFor(modelItem => item.Description)
       </td>
       <td>
-        @Html.DisplayFor(modelItem => item.ImageData)
-      </td>
-      <td>
-        @Html.DisplayFor(modelItem => item.ImageType)
-      </td>
-      <td>
-        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+          <a asp-action="Delete" asp-route-id="@item.Id">Delete |</a>
+          <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+        }
       </td>
     </tr>
   }

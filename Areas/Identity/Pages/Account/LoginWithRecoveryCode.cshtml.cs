@@ -1,30 +1,26 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#nullable disable
+﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
-using Blog.Models;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+using Blog.Models;
 
 namespace Blog.Areas.Identity.Pages.Account;
 
 public class LoginWithRecoveryCodeModel : PageModel
 {
   private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
-  private readonly SignInManager<BlogUser> _signInManager;
-  private readonly UserManager<BlogUser> _userManager;
+  private readonly SignInManager<BlogUser>             _signInManager;
+  private readonly UserManager<BlogUser>               _userManager;
 
-  public LoginWithRecoveryCodeModel(
-    SignInManager<BlogUser> signInManager,
-    UserManager<BlogUser> userManager,
-    ILogger<LoginWithRecoveryCodeModel> logger)
+  public LoginWithRecoveryCodeModel(SignInManager<BlogUser> signInManager, UserManager<BlogUser> userManager, ILogger<LoginWithRecoveryCodeModel> logger)
   {
     _signInManager = signInManager;
-    _userManager = userManager;
-    _logger = logger;
+    _userManager   = userManager;
+    _logger        = logger;
   }
 
   /// <summary>
@@ -44,7 +40,8 @@ public class LoginWithRecoveryCodeModel : PageModel
   {
     // Ensure the user has gone through the username & password screen first
     var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-    if (user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
+    if (user == null) 
+     throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
     ReturnUrl = returnUrl;
 
@@ -53,31 +50,34 @@ public class LoginWithRecoveryCodeModel : PageModel
 
   public async Task<IActionResult> OnPostAsync(string returnUrl = null)
   {
-    if (!ModelState.IsValid) return Page();
+    if (!ModelState.IsValid) 
+     return Page();
 
     var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-    if (user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
+    if (user == null) 
+     throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
     var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
-
-    var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
-
-    var userId = await _userManager.GetUserIdAsync(user);
+    var result       = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+    var userId       = await _userManager.GetUserIdAsync(user);
 
     if (result.Succeeded)
     {
       _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
+
       return LocalRedirect(returnUrl ?? Url.Content("~/"));
     }
 
     if (result.IsLockedOut)
     {
       _logger.LogWarning("User account locked out.");
+
       return RedirectToPage("./Lockout");
     }
 
     _logger.LogWarning("Invalid recovery code entered for user with ID '{UserId}' ", user.Id);
     ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
+
     return Page();
   }
 

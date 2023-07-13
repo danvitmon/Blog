@@ -1,11 +1,11 @@
 ﻿@using X.PagedList.Mvc.Core
 @using X.PagedList.Web.Common
+
 @using Blog.Services.Interfaces
+
 @model X.PagedList.IPagedList<BlogPost>
 
-
 @inject IImageService _ImageService
-
 
 @{
   ViewData["Title"] = "Home Page";
@@ -26,7 +26,7 @@
                         <div class="media-body">
                             <div class="author-info">
                                 <h1 class="title"><a href="#">Daniel Monastirsky</a></h1>
-                                <span class="b3 subtitle">Junior Software Developer</span>
+                                <span class="b3 subtitle">Software Developer</span>
                             </div>
                             <div class="content">
                                 <p class="b1 description">
@@ -36,9 +36,9 @@
                                     Let me know what you think of my blog and leave some likes on what you enjoyed reading the most!
                                 </p>
                                 <ul class="social-share-transparent size-md">
-                                    <li><a href="https://www.instagram.com/donmonfon/"><i class="fab fa-instagram"></i></a></li>
-                                    <li><a href="https://www.github.com/danvitmon"><i class="fab fa-github"></i></a></li>
-                                    <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173"><i class="fab fa-linkedin-in"></i></a></li>
+                                    <li><a href="https://www.instagram.com/donmonfon/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                                    <li><a href="https://www.github.com/danvitmon" target="_blank"><i class="fab fa-github"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/daniel-monastirsky-1625ba173" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
                                 </ul>
                             </div>
                         </div>

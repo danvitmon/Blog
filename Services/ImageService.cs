@@ -4,10 +4,9 @@ namespace Blog.Services;
 
 public class ImageService : IImageService
 {
-  private readonly string? _defaultBlogImage = "/img/DefaultBlogImage.png";
+  private readonly string? _defaultBlogImage     = "/img/DefaultBlogImage.png";
   private readonly string? _defaultCategoryImage = "/img/DefaultCategoryImage.png";
-
-  private readonly string? _defaultUserImage = "/img/DefaultContactImage.png";
+  private readonly string? _defaultUserImage     = "/img/DefaultContactImage.png";
 
   public string? ConvertByteArrayToFile(byte[]? fileData, string? extension, int defaultImage)
   {
@@ -21,7 +20,7 @@ public class ImageService : IImageService
       }
 
     var imageBase64Data = Convert.ToBase64String(fileData);
-    imageBase64Data = string.Format($"data:{extension};base64,{imageBase64Data}");
+    imageBase64Data     = string.Format($"data:{extension};base64,{imageBase64Data}");
 
     return imageBase64Data;
   }
@@ -30,6 +29,7 @@ public class ImageService : IImageService
   {
     using var memoryStream = new MemoryStream();
     await file!.CopyToAsync(memoryStream);
+
     var byteFile = memoryStream.ToArray();
     memoryStream.Close();
 
